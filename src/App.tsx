@@ -174,7 +174,7 @@ function LegendaryCursor() {
 }
 
 const navLinks = [
-  { href: '#apps', label: 'Personal Apps' },
+  { href: '#apps', label: 'Solo Lab' },
   { href: '#work', label: 'Company' },
   { href: '#skills', label: 'Skills' },
   { href: '#resume', label: 'Resume' },
@@ -347,7 +347,7 @@ function Hero() {
               href="#apps"
               className="cursor-grow inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-ink shadow-[0_0_32px_rgba(61,255,139,0.35)] transition hover:brightness-110"
             >
-              Explore personal apps
+              Explore Solo Lab
               <ArrowUpRight size={16} />
             </a>
             <a
@@ -437,82 +437,7 @@ function SectionLabel({
   )
 }
 
-function FeaturedPersonal() {
-  const featured = apps.filter((a) => a.featured).slice(0, 4)
-  return (
-    <section className="relative border-t border-line py-20 md:py-28">
-      <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <SectionLabel icon={<Sparkles size={12} />}>Personal projects</SectionLabel>
-        <p className="text-sm tracking-[0.22em] text-lime uppercase">Featured</p>
-        <h2 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight md:text-5xl">
-          Apps I built on my own
-        </h2>
-        <p className="mt-4 max-w-2xl text-mist">
-          Solo products live on Play Store — logo + QR on every card. Not company work.
-        </p>
-        <div className="mt-12 grid gap-4 md:grid-cols-2">
-          {featured.map((app, i) => (
-            <motion.div
-              key={app.id}
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.45, delay: i * 0.06 }}
-              className="group relative overflow-hidden rounded-3xl border border-line bg-panel p-6 md:p-8"
-            >
-              <div
-                className="absolute inset-0 opacity-40 transition duration-500 group-hover:opacity-70"
-                style={{
-                  background: `radial-gradient(circle at 88% 8%, ${app.accent}55, transparent 42%)`,
-                }}
-              />
-              <div className="relative flex h-full flex-col justify-between gap-6">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="flex min-w-0 gap-4">
-                    <AppLogo app={app} size={68} />
-                    <div className="min-w-0">
-                      <p className="text-xs tracking-wide text-mist uppercase">
-                        Personal · {app.category} · {app.downloads}
-                      </p>
-                      <h3 className="mt-2 font-display text-2xl font-bold text-cream md:text-3xl">
-                        {app.name}
-                      </h3>
-                      <p className="mt-2 max-w-sm text-sm leading-relaxed text-mist">{app.tagline}</p>
-                    </div>
-                  </div>
-                  <AppQr url={app.playStore} size={100} />
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex flex-wrap gap-1.5">
-                    {app.stack.slice(0, 3).map((s) => (
-                      <span
-                        key={s}
-                        className="rounded-full border border-line px-2.5 py-1 text-[11px] text-cream/80"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                  <a
-                    href={app.playStore}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="cursor-grow inline-flex items-center gap-1.5 rounded-full bg-lime px-4 py-2 text-xs font-semibold text-ink transition hover:brightness-110"
-                  >
-                    Play Store
-                    <ArrowUpRight size={14} />
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function PersonalApps() {
+function SoloLab() {
   const [filter, setFilter] = useState<AppCategory>('All')
   const filtered = useMemo(() => {
     if (filter === 'All') return apps
@@ -522,13 +447,15 @@ function PersonalApps() {
   return (
     <section id="apps" className="relative border-t border-line py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <SectionLabel icon={<Sparkles size={12} />}>Personal only · {apps.length} apps</SectionLabel>
-        <p className="text-sm tracking-[0.22em] text-lime uppercase">Indie catalog</p>
-        <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
-          Every personal app — logo &amp; QR
+        <SectionLabel icon={<Sparkles size={12} />}>
+          Personal · {apps.length} live apps
+        </SectionLabel>
+        <p className="text-sm tracking-[0.22em] text-lime uppercase">Solo Lab</p>
+        <h2 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight md:text-5xl">
+          Every app I built alone
         </h2>
-        <p className="mt-4 max-w-xl text-mist">
-          Built, shipped, and maintained by me. Company work is in the section below — not mixed here.
+        <p className="mt-4 max-w-2xl text-mist">
+          My personal Play Store catalog — logo + QR on every card. Not company work.
         </p>
 
         <div className="mt-10 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -570,9 +497,12 @@ function PersonalApps() {
                       <AppLogo app={app} size={56} />
                       <div className="min-w-0">
                         <p className="text-xs tracking-wide text-mist uppercase">
-                          Personal · {app.downloads}
+                          {app.featured ? 'Spotlight · ' : ''}
+                          {app.category} · {app.downloads}
                         </p>
-                        <h3 className="mt-1 font-display text-xl font-bold text-cream">{app.name}</h3>
+                        <h3 className="mt-1 font-display text-xl font-bold text-cream">
+                          {app.name}
+                        </h3>
                       </div>
                     </div>
                     <AppQr url={app.playStore} size={88} />
@@ -921,8 +851,7 @@ export default function App() {
       <main className="relative z-[2]">
         <Hero />
         <About />
-        <FeaturedPersonal />
-        <PersonalApps />
+        <SoloLab />
         <CompanyWork />
         <Skills />
         <Resume />
