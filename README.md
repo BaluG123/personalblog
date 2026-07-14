@@ -1,8 +1,6 @@
 # Balappa Goudi — Portfolio
 
-Personal portfolio for **Balappa Goudi** (`BaluG123` / `balu1072000@gmail.com`).
-
-> Deploy only to **github.com/BaluG123** — not the company account.
+Personal portfolio for **Balappa Goudi** (`BaluG123`).
 
 ## Stack
 
@@ -10,12 +8,14 @@ Personal portfolio for **Balappa Goudi** (`BaluG123` / `balu1072000@gmail.com`).
 - Tailwind CSS v4
 - Framer Motion
 
-## Local
+## Local preview
 
 ```bash
 npm install
 npm run dev
 ```
+
+Open: [http://127.0.0.1:5173/personalblog/](http://127.0.0.1:5173/personalblog/)
 
 ## Build
 
@@ -24,19 +24,19 @@ npm run build
 npm run preview
 ```
 
-## Deploy to GitHub Pages (BaluG123 only)
+## Publish (you handle this)
 
-1. On GitHub (logged in as **BaluG123**), create a public repo named `personalblog`.
-2. Make sure your **personal** SSH key is added under BaluG123 → Settings → SSH keys  
-   (and that the same key is **not** the one GitHub maps to `balappa11`).
-3. From this folder:
+Repo: [github.com/BaluG123/personalblog](https://github.com/BaluG123/personalblog)
 
 ```bash
-git remote add origin git@github.com:BaluG123/personalblog.git
-git push -u origin main
+git add -A
+git commit -m "Update portfolio"
+git push origin main
 npm run deploy
 ```
 
-Live site: **https://BaluG123.github.io/personalblog/**
+Then enable **GitHub Pages** → Source: `gh-pages` branch (or GitHub Actions if you prefer).
 
-Printable resume: `/resume.html` on the live site (or `public/resume.html` locally).
+Live URL after Pages is on: **https://BaluG123.github.io/personalblog/**
+
+Printable resume: `public/resume.html` → `/personalblog/resume.html` on the live site.
