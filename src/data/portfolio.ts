@@ -3,7 +3,7 @@ export const profile = {
   shortName: 'Balappa',
   title: 'React Native Developer',
   tagline:
-    'React Native developer · 16 personal Play Store apps shipped solo · 4+ years building production mobile products.',
+    'React Native developer with 4+ years shipping production Android & iOS apps — from government systems to AI-powered products and a growing Play Store portfolio.',
   location: 'Nagawara, Manyata Tech Park, Bangalore',
   phone: '+91 93805 52833',
   phoneHref: 'tel:+919380552833',
@@ -88,48 +88,48 @@ export const experience: Experience[] = [
   },
 ]
 
-/** Current company product — kept separate from personal Play Store apps */
+/** Highlighted professional product — Vivah.World */
 export const vivah = {
   name: 'Vivah.World',
   company: 'Infobell IT Solutions Pvt. Ltd.',
   role: 'Sole React Native Developer (Android & iOS)',
   dates: 'Nov 2025 – Present',
-  status: 'In review — Play Store & App Store (not live yet)',
+  status: 'Submitted to Play Store & App Store — currently in review',
   logo: 'vivah-logo.png',
   summary:
-    'AI matrimonial platform I built alone for Android and iOS — from core features to store submission.',
+    'AI-powered matrimonial platform for Android and iOS, owned end-to-end from core features through store submission.',
   features: [
     {
       title: 'AI chatbot',
-      detail: 'Integrated conversational AI assistant inside the app for guided help and engagement.',
+      detail: 'Conversational AI assistant for guided help and in-app engagement.',
     },
     {
-      title: 'Voice-only profile',
-      detail: 'Users can add and edit profile details entirely through voice — hands-free onboarding & updates.',
+      title: 'Voice-first profiles',
+      detail: 'Users add and edit profile details entirely through voice.',
     },
     {
       title: 'eKYC',
-      detail: 'Identity verification flow with eKYC for trusted, verified matrimonial profiles.',
+      detail: 'Identity verification with eKYC for trusted, verified profiles.',
     },
     {
       title: 'Face liveness',
-      detail: 'Face liveness detection to prevent spoofing and keep verification secure.',
+      detail: 'Liveness detection to prevent spoofing during verification.',
     },
     {
-      title: 'Profile liking',
-      detail: 'Discover and interact with people by liking profiles across the network.',
+      title: 'Social discovery',
+      detail: 'Profile liking and discovery across the network.',
     },
     {
-      title: 'Chat system',
-      detail: 'Real-time chat so matches can talk securely inside the app.',
+      title: 'Realtime chat',
+      detail: 'In-app messaging so matches can connect securely.',
     },
     {
       title: 'Audio & video calls',
-      detail: 'In-app audio and video calling for richer, real-time conversations.',
+      detail: 'Native audio and video calling for richer conversations.',
     },
     {
-      title: 'Solo Android & iOS',
-      detail: 'Full ownership of both platforms — development through Play Store & App Store review submission.',
+      title: 'End-to-end ownership',
+      detail: 'Full Android & iOS delivery — development through store review.',
     },
   ],
   stack: [
@@ -143,6 +143,41 @@ export const vivah = {
     'Android',
     'iOS',
   ],
+}
+
+/** Highlighted professional product — KAAMS */
+export const kaams = {
+  name: 'KAAMS',
+  fullName: 'Karnataka Advanced Attendance Management System',
+  company: 'EpicMinds IT Pvt. Ltd.',
+  client: 'E-Governance, Government of Karnataka',
+  role: 'React Native Developer',
+  dates: 'Mar 2025 – Jul 2025',
+  summary:
+    'Government attendance platform with face recognition, GPS verification, and offline sync — shipped to App Store and Play Store.',
+  features: [
+    {
+      title: 'Face recognition check-in',
+      detail: 'Check-in/out with react-native-vision-camera for attendance verification.',
+    },
+    {
+      title: 'GPS verification',
+      detail: 'Latitude/longitude validation for accurate on-site attendance tracking.',
+    },
+    {
+      title: 'Offline-first sync',
+      detail: 'SQLite-backed sync so the app works without network connectivity.',
+    },
+    {
+      title: 'Reports & calendar',
+      detail: 'Attendance lists, detailed reports, and calendar views for employees.',
+    },
+    {
+      title: 'Store releases',
+      detail: 'Complete Android & iOS release — signing, metadata, and compliance.',
+    },
+  ],
+  stack: ['React Native', 'Vision Camera', 'SQLite', 'GPS', 'iOS', 'Android'],
 }
 
 export type AppCategory =

@@ -6,6 +6,7 @@ import {
   apps,
   categories,
   experience,
+  kaams,
   profile,
   skills,
   vivah,
@@ -174,8 +175,8 @@ function LegendaryCursor() {
 }
 
 const navLinks = [
+  { href: '#work', label: 'Experience' },
   { href: '#apps', label: 'Solo Lab' },
-  { href: '#work', label: 'Company' },
   { href: '#skills', label: 'Skills' },
   { href: '#resume', label: 'Resume' },
   { href: '#contact', label: 'Contact' },
@@ -316,7 +317,7 @@ function Hero() {
           transition={{ duration: 0.55 }}
           className="mb-6 inline-flex items-center gap-2 rounded-full border border-lime/35 bg-lime/10 px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-lime uppercase"
         >
-          Personal apps first · 16 live on Play Store
+          React Native · Bangalore · Open to opportunities
         </motion.div>
 
         <motion.h1
@@ -338,23 +339,20 @@ function Hero() {
           transition={{ duration: 0.65, delay: 0.16 }}
           className="mt-8 flex max-w-2xl flex-col gap-6 md:mt-10 md:flex-row md:items-end md:justify-between md:gap-12"
         >
-          <p className="text-lg leading-relaxed text-mist md:text-xl">
-            {profile.tagline} Almost everything below is my <span className="text-cream">personal</span> work —
-            company product Vivah.World lives in its own section.
-          </p>
+          <p className="text-lg leading-relaxed text-mist md:text-xl">{profile.tagline}</p>
           <div className="flex shrink-0 flex-wrap gap-3">
             <a
-              href="#apps"
+              href="#work"
               className="cursor-grow inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-ink shadow-[0_0_32px_rgba(61,255,139,0.35)] transition hover:brightness-110"
             >
-              Explore Solo Lab
+              View experience
               <ArrowUpRight size={16} />
             </a>
             <a
-              href="#contact"
+              href="#apps"
               className="cursor-grow inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 text-sm text-cream transition hover:border-lime/60 hover:text-lime"
             >
-              Hire me
+              Solo Lab
             </a>
           </div>
         </motion.div>
@@ -366,9 +364,9 @@ function Hero() {
           className="mt-14 grid grid-cols-3 gap-4 border-t border-line pt-8 md:max-w-xl"
         >
           {[
-            { n: `${profile.experienceYears}+`, l: 'Years' },
-            { n: `${profile.appsLive}`, l: 'Personal apps' },
-            { n: profile.installs, l: 'Installs' },
+            { n: `${profile.experienceYears}+`, l: 'Years experience' },
+            { n: `${profile.appsLive}`, l: 'Apps published' },
+            { n: profile.installs, l: 'Organic installs' },
           ].map((s) => (
             <div key={s.l}>
               <div className="font-display text-2xl font-bold text-cream md:text-4xl">{s.n}</div>
@@ -392,20 +390,21 @@ function About() {
         <div>
           <p className="text-sm tracking-[0.22em] text-lime uppercase">About</p>
           <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
-            Mostly personal.
+            Production mobile.
             <br />
-            All production.
+            End to end.
           </h2>
         </div>
         <div className="space-y-5 text-base leading-relaxed text-mist md:text-lg">
           <p>
-            I&apos;m a React Native developer with {profile.experienceYears}+ years shipping real apps.
-            The heart of this portfolio is my <span className="text-cream">personal Play Store catalog</span> —
-            education, fitness, finance, lifestyle, and platforms I built and published alone.
+            I&apos;m a React Native developer based in Bangalore with {profile.experienceYears}+ years
+            building and shipping Android &amp; iOS products — AI-powered platforms, government systems,
+            fleet &amp; CRM tools, and {profile.appsLive} apps live on the Play Store.
           </p>
           <p>
-            Day job is clearly separated: at Infobell I built <span className="text-cream">Vivah.World</span> solo for
-            Android &amp; iOS (currently in store review). Everything else with logos &amp; QR codes is personal.
+            Recently I delivered Vivah.World (AI matrimonial) and KAAMS (face-recognition attendance for
+            Karnataka e-governance). Outside of client work, I ship indie apps across education, fitness,
+            and booking — each with logos and QR below in Solo Lab.
           </p>
           <div className="flex flex-wrap gap-4 pt-2 text-sm text-cream">
             <span className="inline-flex items-center gap-2">
@@ -448,14 +447,14 @@ function SoloLab() {
     <section id="apps" className="relative border-t border-line py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <SectionLabel icon={<Sparkles size={12} />}>
-          Personal · {apps.length} live apps
+          {apps.length} apps on Play Store
         </SectionLabel>
         <p className="text-sm tracking-[0.22em] text-lime uppercase">Solo Lab</p>
         <h2 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight md:text-5xl">
-          Every app I built alone
+          Indie apps I shipped
         </h2>
         <p className="mt-4 max-w-2xl text-mist">
-          My personal Play Store catalog — logo + QR on every card. Not company work.
+          Side projects and products I built end-to-end — scan any QR to open the live listing.
         </p>
 
         <div className="mt-10 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -543,72 +542,99 @@ function SoloLab() {
   )
 }
 
-function CompanyWork() {
+function Experience() {
   return (
     <section id="work" className="relative border-t border-line py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <SectionLabel icon={<Briefcase size={12} />}>Company product (separate)</SectionLabel>
+        <SectionLabel icon={<Briefcase size={12} />}>Professional work</SectionLabel>
         <p className="text-sm tracking-[0.22em] text-lime uppercase">Experience</p>
         <h2 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight md:text-5xl">
-          Day-job work
+          Products I&apos;ve shipped at work
         </h2>
         <p className="mt-4 max-w-2xl text-mist">
-          Employer products only. The {apps.length} apps above are personal — not from these companies.
+          AI, government e-governance, CRM, and fleet — delivery across Android and iOS.
         </p>
 
-        <div className="mt-10 overflow-hidden rounded-3xl border border-line bg-panel">
-          <div className="relative border-b border-line bg-gradient-to-br from-[#1a0a12] via-ink-soft to-panel p-6 md:p-10">
-            <div className="pointer-events-none absolute -right-16 top-0 h-56 w-56 rounded-full bg-[#ff4d8d]/20 blur-3xl" />
-            <div className="pointer-events-none absolute left-1/3 top-10 h-40 w-40 rounded-full bg-[#ffb020]/15 blur-3xl" />
-            <div className="relative flex gap-5">
-              <img
-                src={asset(vivah.logo)}
-                alt="Vivah.World logo"
-                width={88}
-                height={88}
-                className="h-[88px] w-[88px] rounded-2xl border border-white/10 bg-black object-contain p-2 shadow-[0_0_40px_rgba(255,77,141,0.28)]"
-              />
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-amber-400/40 bg-amber-400/15 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-amber-200 uppercase">
-                    In review
+        <div className="mt-10 grid gap-5 lg:grid-cols-2">
+          {/* Vivah.World highlight */}
+          <article className="overflow-hidden rounded-3xl border border-line bg-panel">
+            <div className="relative border-b border-line bg-gradient-to-br from-[#1a0a12] via-ink-soft to-panel p-6">
+              <div className="pointer-events-none absolute -right-10 top-0 h-40 w-40 rounded-full bg-[#ff4d8d]/20 blur-3xl" />
+              <div className="relative flex gap-4">
+                <img
+                  src={asset(vivah.logo)}
+                  alt="Vivah.World logo"
+                  width={72}
+                  height={72}
+                  className="h-[72px] w-[72px] rounded-2xl border border-white/10 bg-black object-contain p-1.5 shadow-[0_0_32px_rgba(255,77,141,0.28)]"
+                />
+                <div>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-full border border-amber-400/40 bg-amber-400/15 px-2.5 py-0.5 text-[10px] font-semibold tracking-wide text-amber-200 uppercase">
+                      Current
+                    </span>
+                    <span className="rounded-full border border-lime/30 bg-lime/10 px-2.5 py-0.5 text-[10px] font-semibold tracking-wide text-lime uppercase">
+                      Android & iOS
+                    </span>
+                  </div>
+                  <h3 className="mt-2 font-display text-2xl font-bold text-cream md:text-3xl">
+                    {vivah.name}
+                  </h3>
+                  <p className="mt-1 text-sm text-mist">
+                    {vivah.company} · {vivah.dates}
+                  </p>
+                </div>
+              </div>
+              <p className="relative mt-4 text-sm leading-relaxed text-mist">{vivah.summary}</p>
+              <p className="relative mt-2 text-xs text-cream/70">{vivah.status}</p>
+            </div>
+            <ul className="grid gap-0 sm:grid-cols-2">
+              {vivah.features.slice(0, 6).map((f) => (
+                <li key={f.title} className="border-t border-line p-4 sm:odd:border-r">
+                  <p className="text-sm font-semibold text-cream">{f.title}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-mist">{f.detail}</p>
+                </li>
+              ))}
+            </ul>
+          </article>
+
+          {/* KAAMS highlight */}
+          <article className="overflow-hidden rounded-3xl border border-line bg-panel">
+            <div className="relative border-b border-line bg-gradient-to-br from-[#0a1a14] via-ink-soft to-panel p-6">
+              <div className="pointer-events-none absolute -right-10 top-0 h-40 w-40 rounded-full bg-lime/15 blur-3xl" />
+              <div className="relative">
+                <div className="flex flex-wrap gap-2">
+                  <span className="rounded-full border border-lime/30 bg-lime/10 px-2.5 py-0.5 text-[10px] font-semibold tracking-wide text-lime uppercase">
+                    GovTech
                   </span>
-                  <span className="rounded-full border border-lime/30 bg-lime/10 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-lime uppercase">
-                    Solo Android & iOS
+                  <span className="rounded-full border border-line px-2.5 py-0.5 text-[10px] font-semibold tracking-wide text-mist uppercase">
+                    Live on stores
                   </span>
                 </div>
-                <h3 className="mt-3 font-display text-3xl font-bold text-cream md:text-5xl">
-                  {vivah.name}
+                <h3 className="mt-3 font-display text-2xl font-bold text-cream md:text-3xl">
+                  {kaams.name}
                 </h3>
-                <p className="mt-2 text-sm text-mist md:text-base">
-                  {vivah.company} · {vivah.dates}
+                <p className="mt-1 text-sm text-cream/85">{kaams.fullName}</p>
+                <p className="mt-2 text-sm text-mist">
+                  {kaams.client} · via {kaams.company}
                 </p>
-                <p className="mt-1 text-sm font-medium text-cream/90">{vivah.role}</p>
+                <p className="mt-1 text-xs text-mist">{kaams.dates}</p>
               </div>
+              <p className="relative mt-4 text-sm leading-relaxed text-mist">{kaams.summary}</p>
             </div>
-            <p className="relative mt-6 max-w-3xl text-mist md:text-lg">
-              {vivah.summary} {vivah.status}.
-            </p>
-            <div className="relative mt-5 flex flex-wrap gap-2">
-              {vivah.stack.map((t) => (
-                <span key={t} className="rounded-full border border-line px-3 py-1.5 text-xs text-cream">
-                  {t}
-                </span>
+            <ul className="grid gap-0 sm:grid-cols-2">
+              {kaams.features.map((f) => (
+                <li key={f.title} className="border-t border-line p-4 sm:odd:border-r">
+                  <p className="text-sm font-semibold text-cream">{f.title}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-mist">{f.detail}</p>
+                </li>
               ))}
-            </div>
-          </div>
-
-          <div className="grid gap-0 sm:grid-cols-2">
-            {vivah.features.map((f) => (
-              <div key={f.title} className="border-t border-line p-5 sm:odd:border-r md:p-6">
-                <h4 className="font-display text-lg font-bold text-cream">{f.title}</h4>
-                <p className="mt-2 text-sm leading-relaxed text-mist">{f.detail}</p>
-              </div>
-            ))}
-          </div>
+            </ul>
+          </article>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-10">
+          <h3 className="font-display text-xl font-bold text-cream">Career timeline</h3>
           {experience.map((job, i) => (
             <motion.article
               key={job.company}
@@ -631,11 +657,6 @@ function CompanyWork() {
                   {job.role}
                 </h3>
                 <p className="mt-1 text-mist">{job.company}</p>
-                {job.current && (
-                  <p className="mt-2 text-sm text-cream/80">
-                    Product: <span className="text-lime">{vivah.name}</span> — AI matrimonial (in store review)
-                  </p>
-                )}
                 <ul className="mt-5 space-y-2.5">
                   {job.highlights.map((h) => (
                     <li
@@ -727,7 +748,8 @@ function Resume() {
           Updated profile
         </h2>
         <p className="mt-4 max-w-2xl text-mist">
-          {apps.length} personal Play Store apps · Company: Infobell / Vivah.World (in review) · Manyata Tech Park.
+          Infobell · EpicMinds (KAAMS) · Block Stack · Kibbcom · {apps.length} Play Store apps ·{' '}
+          {profile.location}
         </p>
 
         <div className="mt-10 overflow-hidden rounded-2xl border border-line bg-panel">
@@ -742,7 +764,7 @@ function Resume() {
           </div>
           <div className="grid gap-0 md:grid-cols-2">
             <div className="border-b border-line p-6 md:border-r md:border-b-0 md:p-8">
-              <h4 className="text-xs tracking-widest text-lime uppercase">Company experience</h4>
+              <h4 className="text-xs tracking-widest text-lime uppercase">Experience</h4>
               <ul className="mt-4 space-y-4">
                 {experience.map((e) => (
                   <li key={e.company}>
@@ -755,15 +777,15 @@ function Resume() {
               </ul>
             </div>
             <div className="p-6 md:p-8">
-              <h4 className="text-xs tracking-widest text-lime uppercase">Personal apps & education</h4>
+              <h4 className="text-xs tracking-widest text-lime uppercase">Highlights & education</h4>
               <p className="mt-4 font-semibold text-cream">{profile.education.degree}</p>
               <p className="text-sm text-mist">
                 {profile.education.school} · {profile.education.dates}
               </p>
               <ul className="mt-6 space-y-2 text-sm text-mist">
-                <li>· {apps.length} personal Play Store apps (solo)</li>
-                <li>· BookMyGrounds, RailAspirant, Math Master & more</li>
-                <li>· Company: Vivah.World (in review), KAAMS, CRM, Fleet</li>
+                <li>· Vivah.World — AI matrimonial (Android & iOS)</li>
+                <li>· KAAMS — Govt. of Karnataka attendance platform</li>
+                <li>· {apps.length} published Play Store apps · {profile.installs} installs</li>
                 <li>· AI tools: Claude.ai, Cursor, Antigravity, Gemini</li>
               </ul>
               <a
@@ -836,7 +858,7 @@ function Footer() {
         <p>
           © {new Date().getFullYear()} {profile.name}
         </p>
-        <p>Personal apps · Vivah.World (company) · Bangalore</p>
+        <p>React Native developer · Bangalore</p>
       </div>
     </footer>
   )
@@ -851,8 +873,8 @@ export default function App() {
       <main className="relative z-[2]">
         <Hero />
         <About />
+        <Experience />
         <SoloLab />
-        <CompanyWork />
         <Skills />
         <Resume />
         <Contact />
