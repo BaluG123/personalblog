@@ -3,7 +3,7 @@ export const profile = {
   shortName: 'Balappa',
   title: 'React Native Developer',
   tagline:
-    'I design, build, and ship production mobile apps end-to-end — from idea to Play Store & App Store.',
+    'React Native developer · 16 personal Play Store apps shipped solo · 4+ years building production mobile products.',
   location: 'Nagawara, Manyata Tech Park, Bangalore',
   phone: '+91 93805 52833',
   phoneHref: 'tel:+919380552833',
@@ -46,7 +46,7 @@ export const experience: Experience[] = [
       'WebRTC',
     ],
     highlights: [
-      'Sole developer for Vivah.ai (Android & iOS) — built the full matrimonial app end-to-end alone.',
+      'Sole developer for Vivah.World (Android & iOS) — built the full matrimonial app end-to-end alone.',
       'Integrated AI chatbot; voice-only profile create & edit so users can manage details hands-free.',
       'Implemented eKYC, face liveness, profile liking, chat, and audio/video calling.',
       'Android & iOS builds submitted and currently in Play Store & App Store review (not live yet).',
@@ -90,7 +90,7 @@ export const experience: Experience[] = [
 
 /** Current company product — kept separate from personal Play Store apps */
 export const vivah = {
-  name: 'Vivah.ai',
+  name: 'Vivah.World',
   company: 'Infobell IT Solutions Pvt. Ltd.',
   role: 'Sole React Native Developer (Android & iOS)',
   dates: 'Nov 2025 – Present',

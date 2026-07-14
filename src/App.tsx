@@ -1,7 +1,7 @@
-import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useScroll, AnimatePresence } from 'framer-motion'
 import { ArrowUpRight, Briefcase, Mail, MapPin, Menu, Phone, Sparkles, X } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
   apps,
   categories,
@@ -14,8 +14,57 @@ import {
 } from './data/portfolio'
 
 function asset(path: string) {
-  const base = import.meta.env.BASE_URL
-  return `${base}${path.replace(/^\//, '')}`
+  const clean = path.replace(/^\//, '')
+  const base = import.meta.env.BASE_URL || './'
+  if (base.endsWith('/')) return `${base}${clean}`
+  return `${base}/${clean}`
+}
+
+function AppLogo({ app, size = 56 }: { app: AppItem; size?: number }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) {
+    return (
+      <div
+        style={{ width: size, height: size }}
+        className="flex shrink-0 items-center justify-center rounded-2xl border border-lime/40 bg-lime/15 font-display text-lg font-bold text-lime"
+        aria-label={`${app.name} logo`}
+      >
+        {app.name.slice(0, 1)}
+      </div>
+    )
+  }
+  return (
+    <img
+      src={asset(app.icon)}
+      alt={`${app.name} logo`}
+      width={size}
+      height={size}
+      className="shrink-0 rounded-2xl border border-line bg-ink object-cover shadow-[0_0_28px_rgba(61,255,139,0.18)]"
+      loading="eager"
+      onError={() => setFailed(true)}
+    />
+  )
+}
+
+function AppQr({ url, size = 96 }: { url: string; size?: number }) {
+  return (
+    <div className="flex shrink-0 flex-col items-center gap-1.5">
+      <div className="rounded-xl border-2 border-lime/60 bg-white p-2 shadow-[0_0_28px_rgba(61,255,139,0.3)]">
+        <QRCodeSVG
+          value={url}
+          size={size}
+          bgColor="#ffffff"
+          fgColor="#03110a"
+          level="M"
+          includeMargin={false}
+          style={{ width: size, height: size, display: 'block' }}
+        />
+      </div>
+      <span className="text-[10px] font-semibold tracking-widest text-lime uppercase">
+        Scan
+      </span>
+    </div>
+  )
 }
 
 function GitHubIcon({ size = 14 }: { size?: number }) {
@@ -28,45 +77,105 @@ function GitHubIcon({ size = 14 }: { size?: number }) {
 
 function ScrollProgress() {
   const { scrollYProgress } = useScroll()
-  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 28 })
+  const scaleX = useSpring(scrollYProgress, { stiffness: 140, damping: 30 })
   return (
     <motion.div
       style={{ scaleX }}
-      className="fixed top-0 left-0 right-0 z-[60] h-[2px] origin-left bg-lime"
+      className="fixed top-0 left-0 right-0 z-[80] h-[3px] origin-left bg-gradient-to-r from-lime via-sky to-lime"
     />
   )
 }
 
-function CursorGlow() {
-  const [pos, setPos] = useState({ x: 0, y: 0 })
-  const [on, setOn] = useState(false)
+/** Custom cursor icon that tracks the pointer everywhere */
+function LegendaryCursor() {
+  const x = useMotionValue(-100)
+  const y = useMotionValue(-100)
+  const sx = useSpring(x, { stiffness: 500, damping: 35, mass: 0.4 })
+  const sy = useSpring(y, { stiffness: 500, damping: 35, mass: 0.4 })
+  const rx = useSpring(x, { stiffness: 180, damping: 28, mass: 0.6 })
+  const ry = useSpring(y, { stiffness: 180, damping: 28, mass: 0.6 })
+  const [enabled, setEnabled] = useState(false)
+  const [hovering, setHovering] = useState(false)
+  const [clicking, setClicking] = useState(false)
 
   useEffect(() => {
     const fine = window.matchMedia('(pointer: fine)').matches
-    if (!fine) return
-    setOn(true)
-    const move = (e: MouseEvent) => setPos({ x: e.clientX, y: e.clientY })
-    window.addEventListener('mousemove', move)
-    return () => window.removeEventListener('mousemove', move)
-  }, [])
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (!fine || reduce) return
 
-  if (!on) return null
+    setEnabled(true)
+    document.body.classList.add('has-custom-cursor')
+
+    const onMove = (e: MouseEvent) => {
+      x.set(e.clientX)
+      y.set(e.clientY)
+      const t = e.target as HTMLElement | null
+      const interactive = !!t?.closest('a, button, [role="button"], input, textarea, .cursor-grow')
+      setHovering(interactive)
+    }
+    const down = () => setClicking(true)
+    const up = () => setClicking(false)
+
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mousedown', down)
+    window.addEventListener('mouseup', up)
+    return () => {
+      document.body.classList.remove('has-custom-cursor')
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mousedown', down)
+      window.removeEventListener('mouseup', up)
+    }
+  }, [x, y])
+
+  if (!enabled) return null
+
   return (
-    <div
-      className="pointer-events-none fixed z-[1] h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-45 blur-3xl mix-blend-screen"
-      style={{
-        left: pos.x,
-        top: pos.y,
-        background:
-          'radial-gradient(circle, rgba(61,255,139,0.28) 0%, rgba(34,197,94,0.1) 40%, transparent 70%)',
-      }}
-    />
+    <>
+      {/* Soft glow trail */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none fixed z-[9998] h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          left: rx,
+          top: ry,
+          background:
+            'radial-gradient(circle, rgba(61,255,139,0.22) 0%, rgba(61,255,139,0.06) 45%, transparent 70%)',
+        }}
+      />
+      {/* Outer ring */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-1/2 rounded-full border border-lime/70"
+        style={{
+          left: rx,
+          top: ry,
+          width: hovering ? 52 : 36,
+          height: hovering ? 52 : 36,
+          transition: 'width 0.2s ease, height 0.2s ease',
+          background: hovering ? 'rgba(61,255,139,0.08)' : 'transparent',
+          scale: clicking ? 0.85 : 1,
+        }}
+      />
+      {/* Core pointer diamond */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none fixed z-[10000] flex -translate-x-1/2 -translate-y-1/2 items-center justify-center"
+        style={{ left: sx, top: sy }}
+      >
+        <div
+          className="relative flex h-4 w-4 rotate-45 items-center justify-center rounded-[3px] bg-lime shadow-[0_0_18px_rgba(61,255,139,0.85)]"
+          style={{ transform: clicking ? 'rotate(45deg) scale(0.8)' : 'rotate(45deg)' }}
+        >
+          <div className="h-1.5 w-1.5 rounded-[1px] bg-ink" />
+        </div>
+      </motion.div>
+    </>
   )
 }
 
 const navLinks = [
+  { href: '#apps', label: 'Personal Apps' },
   { href: '#work', label: 'Company' },
-  { href: '#apps', label: 'Personal' },
   { href: '#skills', label: 'Skills' },
   { href: '#resume', label: 'Resume' },
   { href: '#contact', label: 'Contact' },
@@ -77,7 +186,7 @@ function Nav() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => setScrolled(window.scrollY > 20)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -92,24 +201,26 @@ function Nav() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors ${
-        scrolled || open ? 'border-b border-line bg-ink/85 backdrop-blur-xl' : ''
+      className={`fixed inset-x-0 top-0 z-50 transition-all ${
+        scrolled || open
+          ? 'border-b border-line bg-ink/90 shadow-[0_8px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl'
+          : ''
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 md:px-8">
         <a
           href="#top"
-          className="font-display text-sm font-bold tracking-tight text-cream md:text-base"
+          className="cursor-grow font-display text-sm font-bold tracking-tight text-cream md:text-base"
           onClick={() => setOpen(false)}
         >
-          BG<span className="text-lime">.</span>
+          Balappa<span className="text-lime">.</span>
         </a>
         <nav className="hidden items-center gap-7 md:flex">
           {navLinks.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className="text-sm text-mist transition hover:text-cream"
+              className="cursor-grow text-sm text-mist transition hover:text-lime"
             >
               {l.label}
             </a>
@@ -120,14 +231,14 @@ function Nav() {
             href={profile.github}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-line bg-ink-soft/70 px-3 py-1.5 text-xs text-cream backdrop-blur transition hover:border-lime/40 hover:text-lime"
+            className="cursor-grow inline-flex items-center gap-2 rounded-full border border-line bg-ink-soft/80 px-3 py-1.5 text-xs text-cream transition hover:border-lime/50 hover:text-lime"
           >
             <GitHubIcon size={14} />
             <span className="hidden sm:inline">GitHub</span>
           </a>
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-cream md:hidden"
+            className="cursor-grow inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-cream md:hidden"
             aria-label={open ? 'Close menu' : 'Open menu'}
             onClick={() => setOpen((v) => !v)}
           >
@@ -142,7 +253,7 @@ function Nav() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="border-t border-line bg-ink/95 md:hidden"
+            className="border-t border-line bg-ink/98 md:hidden"
           >
             <div className="flex flex-col gap-1 px-5 py-4">
               {navLinks.map((l) => (
@@ -150,7 +261,7 @@ function Nav() {
                   key={l.href}
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="rounded-xl px-3 py-3 text-lg text-cream transition hover:bg-panel"
+                  className="rounded-xl px-3 py-3 text-lg text-cream transition hover:bg-panel hover:text-lime"
                 >
                   {l.label}
                 </a>
@@ -167,20 +278,20 @@ function AppMarquee() {
   const names = apps.map((a) => a.name)
   const loop = [...names, ...names]
   return (
-    <div className="relative overflow-hidden border-y border-line bg-ink-soft/50 py-4">
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-ink to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-ink to-transparent" />
+    <div className="relative overflow-hidden border-y border-line bg-ink-soft/60 py-4">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-ink to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-ink to-transparent" />
       <motion.div
-        className="flex w-max gap-8 whitespace-nowrap"
+        className="flex w-max gap-10 whitespace-nowrap"
         animate={{ x: ['0%', '-50%'] }}
-        transition={{ duration: 42, ease: 'linear', repeat: Infinity }}
+        transition={{ duration: 48, ease: 'linear', repeat: Infinity }}
       >
         {loop.map((name, i) => (
           <span
             key={`${name}-${i}`}
-            className="font-display text-sm font-semibold tracking-wide text-mist/85"
+            className="font-display text-sm font-semibold tracking-wide text-mist/90"
           >
-            <span className="text-lime">◆</span> {name}
+            <span className="text-lime">◈</span> {name}
           </span>
         ))}
       </motion.div>
@@ -195,53 +306,55 @@ function Hero() {
       className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pb-10 pt-28 md:pb-14 md:pt-32"
     >
       <div className="pointer-events-none absolute inset-0 grid-fade" />
-      <div className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full bg-lime/15 blur-3xl" />
-      <div className="pointer-events-none absolute right-0 top-40 h-80 w-80 rounded-full bg-sky/15 blur-3xl" />
+      <div className="pointer-events-none absolute -left-20 top-16 h-80 w-80 rounded-full bg-lime/15 blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-32 h-96 w-96 rounded-full bg-sky/12 blur-3xl" />
 
       <div className="relative z-10 mx-auto w-full max-w-6xl px-5 md:px-8">
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-5 text-sm uppercase tracking-[0.22em] text-mist"
+          transition={{ duration: 0.55 }}
+          className="mb-6 inline-flex items-center gap-2 rounded-full border border-lime/35 bg-lime/10 px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-lime uppercase"
         >
-          Manyata Tech Park · React Native · Green builds
-        </motion.p>
+          Personal apps first · 16 live on Play Store
+        </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.08 }}
-          className="font-display text-[clamp(3.2rem,12vw,7.5rem)] leading-[0.9] font-extrabold tracking-tight text-cream"
+          transition={{ duration: 0.75, delay: 0.06 }}
+          className="font-display text-[clamp(3.4rem,13vw,8rem)] leading-[0.88] font-extrabold tracking-tight text-cream"
         >
           Balappa
           <br />
-          <span className="text-lime">Goudi</span>
+          <span className="bg-gradient-to-r from-lime via-[#9dffb8] to-sky bg-clip-text text-transparent">
+            Goudi
+          </span>
         </motion.h1>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.18 }}
-          className="mt-8 flex max-w-2xl flex-col gap-6 md:mt-10 md:flex-row md:items-end md:justify-between md:gap-10"
+          transition={{ duration: 0.65, delay: 0.16 }}
+          className="mt-8 flex max-w-2xl flex-col gap-6 md:mt-10 md:flex-row md:items-end md:justify-between md:gap-12"
         >
           <p className="text-lg leading-relaxed text-mist md:text-xl">
-            {profile.tagline} Company work and personal apps stay separate —
-            scan any personal project QR to open it on Play Store.
+            {profile.tagline} Almost everything below is my <span className="text-cream">personal</span> work —
+            company product Vivah.World lives in its own section.
           </p>
           <div className="flex shrink-0 flex-wrap gap-3">
             <a
               href="#apps"
-              className="inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-ink transition hover:brightness-110"
+              className="cursor-grow inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-ink shadow-[0_0_32px_rgba(61,255,139,0.35)] transition hover:brightness-110"
             >
-              Personal apps
+              Explore personal apps
               <ArrowUpRight size={16} />
             </a>
             <a
-              href="#work"
-              className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 text-sm text-cream transition hover:border-lime/50"
+              href="#contact"
+              className="cursor-grow inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 text-sm text-cream transition hover:border-lime/60 hover:text-lime"
             >
-              Company work
+              Hire me
             </a>
           </div>
         </motion.div>
@@ -249,19 +362,17 @@ function Hero() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.45, duration: 0.8 }}
+          transition={{ delay: 0.4, duration: 0.8 }}
           className="mt-14 grid grid-cols-3 gap-4 border-t border-line pt-8 md:max-w-xl"
         >
           {[
-            { n: `${profile.experienceYears}+`, l: 'Years experience' },
+            { n: `${profile.experienceYears}+`, l: 'Years' },
             { n: `${profile.appsLive}`, l: 'Personal apps' },
-            { n: profile.installs, l: 'Organic installs' },
+            { n: profile.installs, l: 'Installs' },
           ].map((s) => (
             <div key={s.l}>
-              <div className="font-display text-2xl font-bold text-cream md:text-3xl">
-                {s.n}
-              </div>
-              <div className="mt-1 text-xs text-mist md:text-sm">{s.l}</div>
+              <div className="font-display text-2xl font-bold text-cream md:text-4xl">{s.n}</div>
+              <div className="mt-1 text-xs tracking-wide text-mist uppercase md:text-sm">{s.l}</div>
             </div>
           ))}
         </motion.div>
@@ -277,27 +388,24 @@ function Hero() {
 function About() {
   return (
     <section className="relative border-t border-line py-20 md:py-28">
-      <div className="mx-auto grid max-w-6xl gap-12 px-5 md:grid-cols-[1fr_1.2fr] md:gap-16 md:px-8">
+      <div className="mx-auto grid max-w-6xl gap-12 px-5 md:grid-cols-[1fr_1.15fr] md:gap-16 md:px-8">
         <div>
-          <p className="text-sm uppercase tracking-[0.2em] text-lime">About</p>
+          <p className="text-sm tracking-[0.22em] text-lime uppercase">About</p>
           <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
-            Two lanes.
+            Mostly personal.
             <br />
-            One craft.
+            All production.
           </h2>
         </div>
         <div className="space-y-5 text-base leading-relaxed text-mist md:text-lg">
           <p>
-            I&apos;m a React Native developer with {profile.experienceYears}+
-            years shipping production mobile apps. Day job: company products.
-            Nights & weekends: my own Play Store apps — education, fitness,
-            finance, lifestyle, and platforms.
+            I&apos;m a React Native developer with {profile.experienceYears}+ years shipping real apps.
+            The heart of this portfolio is my <span className="text-cream">personal Play Store catalog</span> —
+            education, fitness, finance, lifestyle, and platforms I built and published alone.
           </p>
           <p>
-            Company work covers Vivah.ai (AI matrimonial — currently in store
-            review), government attendance (KAAMS), CRM/HRMS, and fleet systems.
-            Personal projects are listed separately below with logos and QR
-            codes — every one built and published by me.
+            Day job is clearly separated: at Infobell I built <span className="text-cream">Vivah.World</span> solo for
+            Android &amp; iOS (currently in store review). Everything else with logos &amp; QR codes is personal.
           </p>
           <div className="flex flex-wrap gap-4 pt-2 text-sm text-cream">
             <span className="inline-flex items-center gap-2">
@@ -314,54 +422,238 @@ function About() {
   )
 }
 
+function SectionLabel({
+  icon,
+  children,
+}: {
+  icon: ReactNode
+  children: ReactNode
+}) {
+  return (
+    <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-lime/35 bg-lime/10 px-3 py-1 text-xs font-semibold tracking-wide text-lime uppercase">
+      {icon}
+      {children}
+    </div>
+  )
+}
+
+function FeaturedPersonal() {
+  const featured = apps.filter((a) => a.featured).slice(0, 4)
+  return (
+    <section className="relative border-t border-line py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <SectionLabel icon={<Sparkles size={12} />}>Personal projects</SectionLabel>
+        <p className="text-sm tracking-[0.22em] text-lime uppercase">Featured</p>
+        <h2 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight md:text-5xl">
+          Apps I built on my own
+        </h2>
+        <p className="mt-4 max-w-2xl text-mist">
+          Solo products live on Play Store — logo + QR on every card. Not company work.
+        </p>
+        <div className="mt-12 grid gap-4 md:grid-cols-2">
+          {featured.map((app, i) => (
+            <motion.div
+              key={app.id}
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.45, delay: i * 0.06 }}
+              className="group relative overflow-hidden rounded-3xl border border-line bg-panel p-6 md:p-8"
+            >
+              <div
+                className="absolute inset-0 opacity-40 transition duration-500 group-hover:opacity-70"
+                style={{
+                  background: `radial-gradient(circle at 88% 8%, ${app.accent}55, transparent 42%)`,
+                }}
+              />
+              <div className="relative flex h-full flex-col justify-between gap-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex min-w-0 gap-4">
+                    <AppLogo app={app} size={68} />
+                    <div className="min-w-0">
+                      <p className="text-xs tracking-wide text-mist uppercase">
+                        Personal · {app.category} · {app.downloads}
+                      </p>
+                      <h3 className="mt-2 font-display text-2xl font-bold text-cream md:text-3xl">
+                        {app.name}
+                      </h3>
+                      <p className="mt-2 max-w-sm text-sm leading-relaxed text-mist">{app.tagline}</p>
+                    </div>
+                  </div>
+                  <AppQr url={app.playStore} size={100} />
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex flex-wrap gap-1.5">
+                    {app.stack.slice(0, 3).map((s) => (
+                      <span
+                        key={s}
+                        className="rounded-full border border-line px-2.5 py-1 text-[11px] text-cream/80"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                  <a
+                    href={app.playStore}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="cursor-grow inline-flex items-center gap-1.5 rounded-full bg-lime px-4 py-2 text-xs font-semibold text-ink transition hover:brightness-110"
+                  >
+                    Play Store
+                    <ArrowUpRight size={14} />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function PersonalApps() {
+  const [filter, setFilter] = useState<AppCategory>('All')
+  const filtered = useMemo(() => {
+    if (filter === 'All') return apps
+    return apps.filter((a) => a.category === filter)
+  }, [filter])
+
+  return (
+    <section id="apps" className="relative border-t border-line py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <SectionLabel icon={<Sparkles size={12} />}>Personal only · {apps.length} apps</SectionLabel>
+        <p className="text-sm tracking-[0.22em] text-lime uppercase">Indie catalog</p>
+        <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
+          Every personal app — logo &amp; QR
+        </h2>
+        <p className="mt-4 max-w-xl text-mist">
+          Built, shipped, and maintained by me. Company work is in the section below — not mixed here.
+        </p>
+
+        <div className="mt-10 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {categories.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setFilter(c)}
+              className={`cursor-grow shrink-0 rounded-full px-4 py-2 text-sm transition ${
+                filter === c
+                  ? 'bg-lime font-semibold text-ink'
+                  : 'border border-line text-mist hover:border-lime/50 hover:text-cream'
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <AnimatePresence mode="popLayout">
+            {filtered.map((app, i) => (
+              <motion.article
+                key={app.id}
+                layout
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.35, delay: (i % 6) * 0.03 }}
+                className="group relative overflow-hidden rounded-2xl border border-line bg-panel/95 p-5 transition hover:border-lime/45 hover:shadow-[0_0_40px_rgba(61,255,139,0.08)]"
+              >
+                <div
+                  className="absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-30 blur-2xl transition group-hover:opacity-55"
+                  style={{ background: app.accent }}
+                />
+                <div className="relative">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 gap-3">
+                      <AppLogo app={app} size={56} />
+                      <div className="min-w-0">
+                        <p className="text-xs tracking-wide text-mist uppercase">
+                          Personal · {app.downloads}
+                        </p>
+                        <h3 className="mt-1 font-display text-xl font-bold text-cream">{app.name}</h3>
+                      </div>
+                    </div>
+                    <AppQr url={app.playStore} size={88} />
+                  </div>
+                  <p className="mt-4 text-sm leading-relaxed text-mist">{app.tagline}</p>
+                  <ul className="mt-3 space-y-1.5">
+                    {app.highlights.slice(0, 2).map((h) => (
+                      <li key={h} className="text-xs leading-relaxed text-cream/70">
+                        · {h}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-5 flex items-center justify-between gap-2">
+                    <div className="flex flex-wrap gap-1.5">
+                      {app.stack.slice(0, 2).map((s) => (
+                        <span key={s} className="rounded-md bg-ink px-2 py-0.5 text-[10px] text-mist">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                    <a
+                      href={app.playStore}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="cursor-grow inline-flex items-center gap-1 text-xs font-semibold text-lime transition hover:underline"
+                    >
+                      Open
+                      <ArrowUpRight size={14} />
+                    </a>
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </AnimatePresence>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function CompanyWork() {
   return (
     <section id="work" className="relative border-t border-line py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-lime/30 bg-lime/10 px-3 py-1 text-xs font-semibold tracking-wide text-lime uppercase">
-          <Briefcase size={12} />
-          Company products
-        </div>
-        <p className="text-sm uppercase tracking-[0.2em] text-lime">Experience</p>
+        <SectionLabel icon={<Briefcase size={12} />}>Company product (separate)</SectionLabel>
+        <p className="text-sm tracking-[0.22em] text-lime uppercase">Experience</p>
         <h2 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight md:text-5xl">
-          What I build at work
+          Day-job work
         </h2>
         <p className="mt-4 max-w-2xl text-mist">
-          Employer products only — not mixed with my personal Play Store apps.
+          Employer products only. The {apps.length} apps above are personal — not from these companies.
         </p>
 
         <div className="mt-10 overflow-hidden rounded-3xl border border-line bg-panel">
           <div className="relative border-b border-line bg-gradient-to-br from-[#1a0a12] via-ink-soft to-panel p-6 md:p-10">
             <div className="pointer-events-none absolute -right-16 top-0 h-56 w-56 rounded-full bg-[#ff4d8d]/20 blur-3xl" />
             <div className="pointer-events-none absolute left-1/3 top-10 h-40 w-40 rounded-full bg-[#ffb020]/15 blur-3xl" />
-            <div className="relative flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-              <div className="flex gap-5">
-                <img
-                  src={asset(vivah.logo)}
-                  alt="Vivah.ai logo"
-                  width={88}
-                  height={88}
-                  className="h-[88px] w-[88px] rounded-2xl border border-white/10 bg-black object-contain p-2 shadow-[0_0_40px_rgba(255,77,141,0.25)]"
-                />
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-amber-400/40 bg-amber-400/15 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-amber-200 uppercase">
-                      In review
-                    </span>
-                    <span className="rounded-full border border-lime/30 bg-lime/10 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-lime uppercase">
-                      Solo Android & iOS
-                    </span>
-                  </div>
-                  <h3 className="mt-3 font-display text-3xl font-bold text-cream md:text-5xl">
-                    {vivah.name}
-                  </h3>
-                  <p className="mt-2 text-sm text-mist md:text-base">
-                    {vivah.company} · {vivah.dates}
-                  </p>
-                  <p className="mt-1 text-sm font-medium text-cream/90">
-                    {vivah.role}
-                  </p>
+            <div className="relative flex gap-5">
+              <img
+                src={asset(vivah.logo)}
+                alt="Vivah.World logo"
+                width={88}
+                height={88}
+                className="h-[88px] w-[88px] rounded-2xl border border-white/10 bg-black object-contain p-2 shadow-[0_0_40px_rgba(255,77,141,0.28)]"
+              />
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full border border-amber-400/40 bg-amber-400/15 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-amber-200 uppercase">
+                    In review
+                  </span>
+                  <span className="rounded-full border border-lime/30 bg-lime/10 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-lime uppercase">
+                    Solo Android & iOS
+                  </span>
                 </div>
+                <h3 className="mt-3 font-display text-3xl font-bold text-cream md:text-5xl">
+                  {vivah.name}
+                </h3>
+                <p className="mt-2 text-sm text-mist md:text-base">
+                  {vivah.company} · {vivah.dates}
+                </p>
+                <p className="mt-1 text-sm font-medium text-cream/90">{vivah.role}</p>
               </div>
             </div>
             <p className="relative mt-6 max-w-3xl text-mist md:text-lg">
@@ -369,10 +661,7 @@ function CompanyWork() {
             </p>
             <div className="relative mt-5 flex flex-wrap gap-2">
               {vivah.stack.map((t) => (
-                <span
-                  key={t}
-                  className="rounded-full border border-line px-3 py-1.5 text-xs text-cream"
-                >
+                <span key={t} className="rounded-full border border-line px-3 py-1.5 text-xs text-cream">
                   {t}
                 </span>
               ))}
@@ -381,13 +670,8 @@ function CompanyWork() {
 
           <div className="grid gap-0 sm:grid-cols-2">
             {vivah.features.map((f) => (
-              <div
-                key={f.title}
-                className="border-t border-line p-5 sm:odd:border-r md:p-6"
-              >
-                <h4 className="font-display text-lg font-bold text-cream">
-                  {f.title}
-                </h4>
+              <div key={f.title} className="border-t border-line p-5 sm:odd:border-r md:p-6">
+                <h4 className="font-display text-lg font-bold text-cream">{f.title}</h4>
                 <p className="mt-2 text-sm leading-relaxed text-mist">{f.detail}</p>
               </div>
             ))}
@@ -419,8 +703,7 @@ function CompanyWork() {
                 <p className="mt-1 text-mist">{job.company}</p>
                 {job.current && (
                   <p className="mt-2 text-sm text-cream/80">
-                    Product: <span className="text-lime">{vivah.name}</span> —
-                    AI matrimonial (in store review)
+                    Product: <span className="text-lime">{vivah.name}</span> — AI matrimonial (in store review)
                   </p>
                 )}
                 <ul className="mt-5 space-y-2.5">
@@ -454,232 +737,6 @@ function CompanyWork() {
   )
 }
 
-function AppLogo({ app, size = 56 }: { app: AppItem; size?: number }) {
-  return (
-    <img
-      src={asset(app.icon)}
-      alt={`${app.name} logo`}
-      width={size}
-      height={size}
-      className="rounded-2xl border border-line bg-ink object-cover shadow-[0_0_24px_rgba(61,255,139,0.12)]"
-      loading="lazy"
-    />
-  )
-}
-
-function AppQr({ url, size = 84 }: { url: string; size?: number }) {
-  return (
-    <div className="rounded-xl border border-line bg-cream p-1.5 shadow-[0_0_20px_rgba(61,255,139,0.15)]">
-      <QRCodeSVG
-        value={url}
-        size={size}
-        bgColor="#eef8f0"
-        fgColor="#04140c"
-        level="M"
-        marginSize={1}
-      />
-    </div>
-  )
-}
-
-function FeaturedPersonal() {
-  const featured = apps.filter((a) => a.featured).slice(0, 4)
-  return (
-    <section className="relative border-t border-line py-20 md:py-28">
-      <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-lime/30 bg-lime/10 px-3 py-1 text-xs font-semibold tracking-wide text-lime uppercase">
-          <Sparkles size={12} />
-          Personal projects
-        </div>
-        <p className="text-sm uppercase tracking-[0.2em] text-lime">Featured</p>
-        <h2 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight md:text-5xl">
-          Apps I built on my own
-        </h2>
-        <p className="mt-4 max-w-2xl text-mist">
-          Solo products on Play Store — logos + QR codes for quick install.
-        </p>
-        <div className="mt-12 grid gap-4 md:grid-cols-2">
-          {featured.map((app, i) => (
-            <motion.div
-              key={app.id}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.45, delay: i * 0.06 }}
-              className="group relative min-h-[240px] overflow-hidden rounded-3xl border border-line bg-panel p-6 md:p-8"
-            >
-              <div
-                className="absolute inset-0 opacity-35 transition duration-500 group-hover:opacity-60"
-                style={{
-                  background: `radial-gradient(circle at 90% 10%, ${app.accent}55, transparent 45%)`,
-                }}
-              />
-              <div className="relative flex h-full flex-col justify-between gap-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex gap-4">
-                    <AppLogo app={app} size={64} />
-                    <div>
-                      <p className="text-xs tracking-wide text-mist uppercase">
-                        {app.category} · {app.downloads}
-                      </p>
-                      <h3 className="mt-2 font-display text-2xl font-bold text-cream md:text-3xl">
-                        {app.name}
-                      </h3>
-                      <p className="mt-2 max-w-sm text-sm leading-relaxed text-mist">
-                        {app.tagline}
-                      </p>
-                    </div>
-                  </div>
-                  <AppQr url={app.playStore} size={78} />
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex flex-wrap gap-1.5">
-                    {app.stack.slice(0, 3).map((s) => (
-                      <span
-                        key={s}
-                        className="rounded-full border border-line px-2.5 py-1 text-[11px] text-cream/80"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                  <a
-                    href={app.playStore}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-full bg-lime px-4 py-2 text-xs font-semibold text-ink transition hover:brightness-110"
-                  >
-                    Play Store
-                    <ArrowUpRight size={14} />
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function PersonalApps() {
-  const [filter, setFilter] = useState<AppCategory>('All')
-
-  const filtered = useMemo(() => {
-    if (filter === 'All') return apps
-    return apps.filter((a) => a.category === filter)
-  }, [filter])
-
-  return (
-    <section id="apps" className="relative border-t border-line py-20 md:py-28">
-      <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-lime/30 bg-lime/10 px-3 py-1 text-xs font-semibold tracking-wide text-lime uppercase">
-          <Sparkles size={12} />
-          Personal only
-        </div>
-        <p className="text-sm uppercase tracking-[0.2em] text-lime">
-          Indie Play Store
-        </p>
-        <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
-          {apps.length} personal apps — with QR
-        </h2>
-        <p className="mt-4 max-w-xl text-mist">
-          These are my own apps (not company products). Scan the QR or tap
-          through to the live listing.
-        </p>
-
-        <div className="mt-10 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {categories.map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setFilter(c)}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm transition ${
-                filter === c
-                  ? 'bg-lime font-semibold text-ink'
-                  : 'border border-line text-mist hover:border-lime/40 hover:text-cream'
-              }`}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          <AnimatePresence mode="popLayout">
-            {filtered.map((app, i) => (
-              <motion.article
-                key={app.id}
-                layout
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.35, delay: (i % 6) * 0.03 }}
-                className="group relative overflow-hidden rounded-2xl border border-line bg-panel/90 p-5 transition hover:border-lime/40"
-              >
-                <div
-                  className="absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-25 blur-2xl transition group-hover:opacity-45"
-                  style={{ background: app.accent }}
-                />
-                <div className="relative">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex gap-3">
-                      <AppLogo app={app} size={52} />
-                      <div>
-                        <p className="text-xs tracking-wide text-mist uppercase">
-                          {app.category} · {app.downloads}
-                        </p>
-                        <h3 className="mt-1 font-display text-xl font-bold text-cream">
-                          {app.name}
-                        </h3>
-                      </div>
-                    </div>
-                    <AppQr url={app.playStore} size={72} />
-                  </div>
-                  <p className="mt-4 text-sm leading-relaxed text-mist">
-                    {app.tagline}
-                  </p>
-                  <ul className="mt-3 space-y-1.5">
-                    {app.highlights.slice(0, 2).map((h) => (
-                      <li
-                        key={h}
-                        className="text-xs leading-relaxed text-cream/70"
-                      >
-                        · {h}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-5 flex items-center justify-between gap-2">
-                    <div className="flex flex-wrap gap-1.5">
-                      {app.stack.slice(0, 2).map((s) => (
-                        <span
-                          key={s}
-                          className="rounded-md bg-ink px-2 py-0.5 text-[10px] text-mist"
-                        >
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                    <a
-                      href={app.playStore}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-lime transition hover:underline"
-                    >
-                      Open
-                      <ArrowUpRight size={14} />
-                    </a>
-                  </div>
-                </div>
-              </motion.article>
-            ))}
-          </AnimatePresence>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 function Skills() {
   const groups = [
     { title: 'Languages', items: skills.languages },
@@ -692,7 +749,7 @@ function Skills() {
   return (
     <section id="skills" className="relative border-t border-line py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <p className="text-sm uppercase tracking-[0.2em] text-lime">Skills</p>
+        <p className="text-sm tracking-[0.22em] text-lime uppercase">Skills</p>
         <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
           Stack I live in
         </h2>
@@ -704,18 +761,18 @@ function Skills() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: gi * 0.05 }}
-              className={g.title === 'AI tools' || g.title === 'Specialties' ? 'md:col-span-2' : ''}
+              className={
+                g.title === 'AI tools' || g.title === 'Specialties' ? 'md:col-span-2' : ''
+              }
             >
-              <h3 className="text-sm font-semibold tracking-wide text-mist uppercase">
-                {g.title}
-              </h3>
+              <h3 className="text-sm font-semibold tracking-wide text-mist uppercase">{g.title}</h3>
               <div className="mt-4 flex flex-wrap gap-2">
                 {g.items.map((item) => (
                   <span
                     key={item}
-                    className={`rounded-full border px-3.5 py-1.5 text-sm transition hover:border-lime/40 hover:text-lime ${
+                    className={`cursor-grow rounded-full border px-3.5 py-1.5 text-sm transition hover:border-lime/50 hover:text-lime ${
                       g.title === 'AI tools'
-                        ? 'border-lime/35 bg-lime/10 text-lime'
+                        ? 'border-lime/40 bg-lime/10 text-lime'
                         : 'border-line bg-ink-soft text-cream'
                     }`}
                   >
@@ -735,14 +792,12 @@ function Resume() {
   return (
     <section id="resume" className="relative border-t border-line py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <p className="text-sm uppercase tracking-[0.2em] text-lime">Resume</p>
+        <p className="text-sm tracking-[0.22em] text-lime uppercase">Resume</p>
         <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
           Updated profile
         </h2>
         <p className="mt-4 max-w-2xl text-mist">
-          Company experience and personal apps listed as separate tracks —
-          Infobell / Vivah.ai at work (in store review), {apps.length} solo apps
-          on Play Store.
+          {apps.length} personal Play Store apps · Company: Infobell / Vivah.World (in review) · Manyata Tech Park.
         </p>
 
         <div className="mt-10 overflow-hidden rounded-2xl border border-line bg-panel">
@@ -757,9 +812,7 @@ function Resume() {
           </div>
           <div className="grid gap-0 md:grid-cols-2">
             <div className="border-b border-line p-6 md:border-r md:border-b-0 md:p-8">
-              <h4 className="text-xs tracking-widest text-lime uppercase">
-                Company experience
-              </h4>
+              <h4 className="text-xs tracking-widest text-lime uppercase">Company experience</h4>
               <ul className="mt-4 space-y-4">
                 {experience.map((e) => (
                   <li key={e.company}>
@@ -772,26 +825,22 @@ function Resume() {
               </ul>
             </div>
             <div className="p-6 md:p-8">
-              <h4 className="text-xs tracking-widest text-lime uppercase">
-                Personal apps & education
-              </h4>
-              <p className="mt-4 font-semibold text-cream">
-                {profile.education.degree}
-              </p>
+              <h4 className="text-xs tracking-widest text-lime uppercase">Personal apps & education</h4>
+              <p className="mt-4 font-semibold text-cream">{profile.education.degree}</p>
               <p className="text-sm text-mist">
                 {profile.education.school} · {profile.education.dates}
               </p>
               <ul className="mt-6 space-y-2 text-sm text-mist">
                 <li>· {apps.length} personal Play Store apps (solo)</li>
                 <li>· BookMyGrounds, RailAspirant, Math Master & more</li>
-                <li>· Company: Vivah.ai (in review), KAAMS, CRM, Fleet</li>
+                <li>· Company: Vivah.World (in review), KAAMS, CRM, Fleet</li>
                 <li>· AI tools: Claude.ai, Cursor, Antigravity, Gemini</li>
               </ul>
               <a
                 href={asset('resume.html')}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-8 inline-flex items-center gap-2 rounded-full bg-lime px-5 py-2.5 text-sm font-semibold text-ink"
+                className="cursor-grow mt-8 inline-flex items-center gap-2 rounded-full bg-lime px-5 py-2.5 text-sm font-semibold text-ink"
               >
                 Open printable resume
                 <ArrowUpRight size={16} />
@@ -806,15 +855,13 @@ function Resume() {
 
 function Contact() {
   return (
-    <section
-      id="contact"
-      className="relative overflow-hidden border-t border-line py-20 md:py-28"
-    >
-      <div className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-lime/15 blur-3xl" />
+    <section id="contact" className="relative overflow-hidden border-t border-line py-20 md:py-28">
+      <div className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-lime/15 blur-3xl" />
+      <div className="pointer-events-none absolute -left-10 top-10 h-56 w-56 rounded-full bg-sky/10 blur-3xl" />
       <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <p className="text-sm uppercase tracking-[0.2em] text-lime">Contact</p>
+        <p className="text-sm tracking-[0.22em] text-lime uppercase">Contact</p>
         <h2 className="mt-3 max-w-3xl font-display text-4xl font-bold tracking-tight md:text-6xl">
-          Let&apos;s build something green lights love.
+          Let&apos;s ship the next legendary app.
         </h2>
         <p className="mt-4 flex items-center gap-2 text-mist">
           <MapPin size={16} className="text-lime" />
@@ -823,14 +870,14 @@ function Contact() {
         <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
           <a
             href={profile.emailHref}
-            className="inline-flex items-center gap-3 rounded-2xl border border-line bg-panel px-5 py-4 text-cream transition hover:border-lime/40"
+            className="cursor-grow inline-flex items-center gap-3 rounded-2xl border border-line bg-panel px-5 py-4 text-cream transition hover:border-lime/50"
           >
             <Mail className="text-lime" size={18} />
             {profile.email}
           </a>
           <a
             href={profile.phoneHref}
-            className="inline-flex items-center gap-3 rounded-2xl border border-line bg-panel px-5 py-4 text-cream transition hover:border-lime/40"
+            className="cursor-grow inline-flex items-center gap-3 rounded-2xl border border-line bg-panel px-5 py-4 text-cream transition hover:border-lime/50"
           >
             <Phone className="text-lime" size={18} />
             {profile.phone}
@@ -839,7 +886,7 @@ function Contact() {
             href={profile.github}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-3 rounded-2xl border border-line bg-panel px-5 py-4 text-cream transition hover:border-lime/40"
+            className="cursor-grow inline-flex items-center gap-3 rounded-2xl border border-line bg-panel px-5 py-4 text-cream transition hover:border-lime/50"
           >
             <span className="text-lime">
               <GitHubIcon size={18} />
@@ -859,7 +906,7 @@ function Footer() {
         <p>
           © {new Date().getFullYear()} {profile.name}
         </p>
-        <p>Company work · Personal apps · Bangalore</p>
+        <p>Personal apps · Vivah.World (company) · Bangalore</p>
       </div>
     </footer>
   )
@@ -868,15 +915,15 @@ function Footer() {
 export default function App() {
   return (
     <div className="grain mesh-bg min-h-screen">
+      <LegendaryCursor />
       <ScrollProgress />
-      <CursorGlow />
       <Nav />
       <main className="relative z-[2]">
         <Hero />
         <About />
-        <CompanyWork />
         <FeaturedPersonal />
         <PersonalApps />
+        <CompanyWork />
         <Skills />
         <Resume />
         <Contact />
