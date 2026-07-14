@@ -35,11 +35,21 @@ export const experience: Experience[] = [
     role: 'React Native Developer',
     dates: 'Nov 2025 – Present',
     current: true,
-    stack: ['React Native', 'iOS', 'Android', 'AI', 'App Store', 'Play Store'],
+    stack: [
+      'React Native',
+      'iOS',
+      'Android',
+      'AI Chatbot',
+      'Voice UI',
+      'eKYC',
+      'Face Liveness',
+      'WebRTC',
+    ],
     highlights: [
-      'Solely owning mobile development for Vivah.world — an AI-powered matrimonial platform for Android and iOS.',
-      'Handling the full lifecycle: feature development, integrations, QA, signing, and production releases to Play Store & App Store.',
-      'Building AI-assisted matching and onboarding flows that feel personal, fast, and store-compliant.',
+      'Sole developer for Vivah.ai (Android & iOS) — built the full matrimonial app end-to-end alone.',
+      'Integrated AI chatbot; voice-only profile create & edit so users can manage details hands-free.',
+      'Implemented eKYC, face liveness, profile liking, chat, and audio/video calling.',
+      'Android & iOS builds submitted and currently in Play Store & App Store review (not live yet).',
     ],
   },
   {
@@ -77,6 +87,63 @@ export const experience: Experience[] = [
     ],
   },
 ]
+
+/** Current company product — kept separate from personal Play Store apps */
+export const vivah = {
+  name: 'Vivah.ai',
+  company: 'Infobell IT Solutions Pvt. Ltd.',
+  role: 'Sole React Native Developer (Android & iOS)',
+  dates: 'Nov 2025 – Present',
+  status: 'In review — Play Store & App Store (not live yet)',
+  logo: 'vivah-logo.png',
+  summary:
+    'AI matrimonial platform I built alone for Android and iOS — from core features to store submission.',
+  features: [
+    {
+      title: 'AI chatbot',
+      detail: 'Integrated conversational AI assistant inside the app for guided help and engagement.',
+    },
+    {
+      title: 'Voice-only profile',
+      detail: 'Users can add and edit profile details entirely through voice — hands-free onboarding & updates.',
+    },
+    {
+      title: 'eKYC',
+      detail: 'Identity verification flow with eKYC for trusted, verified matrimonial profiles.',
+    },
+    {
+      title: 'Face liveness',
+      detail: 'Face liveness detection to prevent spoofing and keep verification secure.',
+    },
+    {
+      title: 'Profile liking',
+      detail: 'Discover and interact with people by liking profiles across the network.',
+    },
+    {
+      title: 'Chat system',
+      detail: 'Real-time chat so matches can talk securely inside the app.',
+    },
+    {
+      title: 'Audio & video calls',
+      detail: 'In-app audio and video calling for richer, real-time conversations.',
+    },
+    {
+      title: 'Solo Android & iOS',
+      detail: 'Full ownership of both platforms — development through Play Store & App Store review submission.',
+    },
+  ],
+  stack: [
+    'React Native',
+    'AI Chatbot',
+    'Voice UI',
+    'eKYC',
+    'Face Liveness',
+    'Chat',
+    'Audio/Video Calls',
+    'Android',
+    'iOS',
+  ],
+}
 
 export type AppCategory =
   | 'All'
@@ -402,10 +469,15 @@ export const skills = {
     'Xcode',
     'Android Studio',
   ],
+  aiTools: ['Claude.ai', 'Cursor', 'Antigravity', 'Google Gemini'],
   specialties: [
     'Play Store & App Store releases',
     'Offline-first mobile (SQLite)',
     'Vision Camera / face recognition',
+    'Face liveness & eKYC',
+    'Voice UI / speech flows',
+    'AI chatbot integration',
+    'Chat + audio/video calling',
     'Maps & GPS tracking',
     'AdMob monetization',
     'JWT / biometric auth',

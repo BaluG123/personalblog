@@ -8,6 +8,7 @@ import {
   experience,
   profile,
   skills,
+  vivah,
   type AppCategory,
   type AppItem,
 } from './data/portfolio'
@@ -293,9 +294,10 @@ function About() {
             finance, lifestyle, and platforms.
           </p>
           <p>
-            Company work covers Vivah.world, government attendance (KAAMS),
-            CRM/HRMS, and fleet systems. Personal projects are listed separately
-            below with logos and QR codes — every one built and published by me.
+            Company work covers Vivah.ai (AI matrimonial — currently in store
+            review), government attendance (KAAMS), CRM/HRMS, and fleet systems.
+            Personal projects are listed separately below with logos and QR
+            codes — every one built and published by me.
           </p>
           <div className="flex flex-wrap gap-4 pt-2 text-sm text-cream">
             <span className="inline-flex items-center gap-2">
@@ -325,34 +327,70 @@ function CompanyWork() {
           What I build at work
         </h2>
         <p className="mt-4 max-w-2xl text-mist">
-          Client and employer products only — not mixed with my personal Play
-          Store apps.
+          Employer products only — not mixed with my personal Play Store apps.
         </p>
 
-        <div className="mt-10 relative overflow-hidden rounded-3xl border border-lime/30 bg-gradient-to-br from-panel via-ink-soft to-panel p-6 md:p-10">
-          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-lime/20 blur-3xl" />
-          <p className="text-xs font-semibold tracking-[0.2em] text-lime uppercase">
-            Current company product
-          </p>
-          <h3 className="mt-3 font-display text-3xl font-bold text-cream md:text-4xl">
-            Vivah.world
-          </h3>
-          <p className="mt-3 max-w-2xl text-mist md:text-lg">
-            AI matrimonial app for Android &amp; iOS at Infobell IT Solutions
-            (joined Nov 10, 2025). I own development through Play Store &amp;
-            App Store release.
-          </p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {['React Native', 'AI', 'Android', 'iOS', 'App Store', 'Play Store'].map(
-              (t) => (
+        <div className="mt-10 overflow-hidden rounded-3xl border border-line bg-panel">
+          <div className="relative border-b border-line bg-gradient-to-br from-[#1a0a12] via-ink-soft to-panel p-6 md:p-10">
+            <div className="pointer-events-none absolute -right-16 top-0 h-56 w-56 rounded-full bg-[#ff4d8d]/20 blur-3xl" />
+            <div className="pointer-events-none absolute left-1/3 top-10 h-40 w-40 rounded-full bg-[#ffb020]/15 blur-3xl" />
+            <div className="relative flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+              <div className="flex gap-5">
+                <img
+                  src={asset(vivah.logo)}
+                  alt="Vivah.ai logo"
+                  width={88}
+                  height={88}
+                  className="h-[88px] w-[88px] rounded-2xl border border-white/10 bg-black object-contain p-2 shadow-[0_0_40px_rgba(255,77,141,0.25)]"
+                />
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-amber-400/40 bg-amber-400/15 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-amber-200 uppercase">
+                      In review
+                    </span>
+                    <span className="rounded-full border border-lime/30 bg-lime/10 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-lime uppercase">
+                      Solo Android & iOS
+                    </span>
+                  </div>
+                  <h3 className="mt-3 font-display text-3xl font-bold text-cream md:text-5xl">
+                    {vivah.name}
+                  </h3>
+                  <p className="mt-2 text-sm text-mist md:text-base">
+                    {vivah.company} · {vivah.dates}
+                  </p>
+                  <p className="mt-1 text-sm font-medium text-cream/90">
+                    {vivah.role}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <p className="relative mt-6 max-w-3xl text-mist md:text-lg">
+              {vivah.summary} {vivah.status}.
+            </p>
+            <div className="relative mt-5 flex flex-wrap gap-2">
+              {vivah.stack.map((t) => (
                 <span
                   key={t}
                   className="rounded-full border border-line px-3 py-1.5 text-xs text-cream"
                 >
                   {t}
                 </span>
-              ),
-            )}
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-0 sm:grid-cols-2">
+            {vivah.features.map((f) => (
+              <div
+                key={f.title}
+                className="border-t border-line p-5 sm:odd:border-r md:p-6"
+              >
+                <h4 className="font-display text-lg font-bold text-cream">
+                  {f.title}
+                </h4>
+                <p className="mt-2 text-sm leading-relaxed text-mist">{f.detail}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -379,6 +417,12 @@ function CompanyWork() {
                   {job.role}
                 </h3>
                 <p className="mt-1 text-mist">{job.company}</p>
+                {job.current && (
+                  <p className="mt-2 text-sm text-cream/80">
+                    Product: <span className="text-lime">{vivah.name}</span> —
+                    AI matrimonial (in store review)
+                  </p>
+                )}
                 <ul className="mt-5 space-y-2.5">
                   {job.highlights.map((h) => (
                     <li
@@ -640,7 +684,8 @@ function Skills() {
   const groups = [
     { title: 'Languages', items: skills.languages },
     { title: 'Frameworks', items: skills.frameworks },
-    { title: 'Tools', items: skills.tools },
+    { title: 'Developer tools', items: skills.tools },
+    { title: 'AI tools', items: skills.aiTools },
     { title: 'Specialties', items: skills.specialties },
   ]
 
@@ -659,6 +704,7 @@ function Skills() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: gi * 0.05 }}
+              className={g.title === 'AI tools' || g.title === 'Specialties' ? 'md:col-span-2' : ''}
             >
               <h3 className="text-sm font-semibold tracking-wide text-mist uppercase">
                 {g.title}
@@ -667,7 +713,11 @@ function Skills() {
                 {g.items.map((item) => (
                   <span
                     key={item}
-                    className="rounded-full border border-line bg-ink-soft px-3.5 py-1.5 text-sm text-cream transition hover:border-lime/40 hover:text-lime"
+                    className={`rounded-full border px-3.5 py-1.5 text-sm transition hover:border-lime/40 hover:text-lime ${
+                      g.title === 'AI tools'
+                        ? 'border-lime/35 bg-lime/10 text-lime'
+                        : 'border-line bg-ink-soft text-cream'
+                    }`}
                   >
                     {item}
                   </span>
@@ -691,7 +741,8 @@ function Resume() {
         </h2>
         <p className="mt-4 max-w-2xl text-mist">
           Company experience and personal apps listed as separate tracks —
-          Infobell / Vivah.world at work, {apps.length} solo apps on Play Store.
+          Infobell / Vivah.ai at work (in store review), {apps.length} solo apps
+          on Play Store.
         </p>
 
         <div className="mt-10 overflow-hidden rounded-2xl border border-line bg-panel">
@@ -733,7 +784,8 @@ function Resume() {
               <ul className="mt-6 space-y-2 text-sm text-mist">
                 <li>· {apps.length} personal Play Store apps (solo)</li>
                 <li>· BookMyGrounds, RailAspirant, Math Master & more</li>
-                <li>· Company: Vivah.world, KAAMS, CRM, Fleet (separate)</li>
+                <li>· Company: Vivah.ai (in review), KAAMS, CRM, Fleet</li>
+                <li>· AI tools: Claude.ai, Cursor, Antigravity, Gemini</li>
               </ul>
               <a
                 href={asset('resume.html')}
