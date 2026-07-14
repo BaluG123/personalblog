@@ -4,14 +4,14 @@ export const profile = {
   title: 'React Native Developer',
   tagline:
     'I design, build, and ship production mobile apps end-to-end — from idea to Play Store & App Store.',
-  location: 'Vijayanagar, Bangalore',
+  location: 'Nagawara, Manyata Tech Park, Bangalore',
   phone: '+91 93805 52833',
   phoneHref: 'tel:+919380552833',
   email: 'balusgoudi@gmail.com',
   emailHref: 'mailto:balusgoudi@gmail.com',
   github: 'https://github.com/BaluG123',
   experienceYears: 4,
-  appsLive: 17,
+  appsLive: 16,
   installs: '15K+',
   education: {
     school: 'PES University, Bangalore',
@@ -95,6 +95,8 @@ export type AppItem = {
   category: Exclude<AppCategory, 'All'>
   downloads: string
   playStore: string
+  packageId: string
+  icon: string
   highlights: string[]
   stack: string[]
   featured?: boolean
@@ -109,6 +111,8 @@ export const apps: AppItem[] = [
     category: 'Platform',
     downloads: '50+',
     playStore: 'https://play.google.com/store/apps/details?id=in.bookmygrounds.app',
+    packageId: 'in.bookmygrounds.app',
+    icon: 'app-icons/bookmygrounds.png',
     featured: true,
     accent: '#7dd3c0',
     stack: ['React Native', 'Backend', 'Razorpay', 'Maps'],
@@ -125,6 +129,8 @@ export const apps: AppItem[] = [
     category: 'Education',
     downloads: '100+',
     playStore: 'https://play.google.com/store/apps/details?id=com.jeepreparationIIT',
+    packageId: 'com.jeepreparationIIT',
+    icon: 'app-icons/jee.png',
     featured: true,
     accent: '#c8f542',
     stack: ['React Native', 'KaTeX', 'AdMob'],
@@ -141,6 +147,8 @@ export const apps: AppItem[] = [
     category: 'Education',
     downloads: '100+',
     playStore: 'https://play.google.com/store/apps/details?id=com.neetcracker',
+    packageId: 'com.neetcracker',
+    icon: 'app-icons/neet.png',
     featured: true,
     accent: '#ff6b4a',
     stack: ['React Native', 'Quizzes', 'Mocks'],
@@ -157,6 +165,8 @@ export const apps: AppItem[] = [
     category: 'Education',
     downloads: '10+',
     playStore: 'https://play.google.com/store/apps/details?id=com.pygrounds',
+    packageId: 'com.pygrounds',
+    icon: 'app-icons/neuralearn.png',
     featured: true,
     accent: '#a78bfa',
     stack: ['React Native', 'Python Labs', 'Quizzes'],
@@ -173,6 +183,8 @@ export const apps: AppItem[] = [
     category: 'Education',
     downloads: '5K+',
     playStore: 'https://play.google.com/store/apps/details?id=com.rrbje',
+    packageId: 'com.rrbje',
+    icon: 'app-icons/rrb.png',
     featured: true,
     accent: '#38bdf8',
     stack: ['React Native', 'Django', 'Firebase', 'AdMob'],
@@ -189,6 +201,8 @@ export const apps: AppItem[] = [
     category: 'Games',
     downloads: '5K+',
     playStore: 'https://play.google.com/store/apps/details?id=com.riddlex',
+    packageId: 'com.riddlex',
+    icon: 'app-icons/mathmaster.png',
     featured: true,
     accent: '#fbbf24',
     stack: ['React Native', 'Django', 'Algorithms', 'AdMob'],
@@ -205,6 +219,8 @@ export const apps: AppItem[] = [
     category: 'Education',
     downloads: '1K+',
     playStore: 'https://play.google.com/store/apps/details?id=com.ibacio',
+    packageId: 'com.ibacio',
+    icon: 'app-icons/ibacio.png',
     accent: '#34d399',
     stack: ['React Native', 'Offline', 'Current Affairs'],
     highlights: [
@@ -220,6 +236,8 @@ export const apps: AppItem[] = [
     category: 'Productivity',
     downloads: '1K+',
     playStore: 'https://play.google.com/store/apps/details?id=com.qrscangenerate.qrlink',
+    packageId: 'com.qrscangenerate.qrlink',
+    icon: 'app-icons/qrlink.png',
     accent: '#c8f542',
     stack: ['React Native', 'Vision Camera'],
     highlights: [
@@ -235,6 +253,8 @@ export const apps: AppItem[] = [
     category: 'Games',
     downloads: '100+',
     playStore: 'https://play.google.com/store/apps/details?id=com.devuniverse',
+    packageId: 'com.devuniverse',
+    icon: 'app-icons/mathiq.png',
     accent: '#fb7185',
     stack: ['React Native', 'Leaderboard', 'AdMob'],
     highlights: [
@@ -250,6 +270,8 @@ export const apps: AppItem[] = [
     category: 'Education',
     downloads: '100+',
     playStore: 'https://play.google.com/store/apps/details?id=com.brainbites',
+    packageId: 'com.brainbites',
+    icon: 'app-icons/upsc.png',
     accent: '#94a3b8',
     stack: ['React Native', 'Education'],
     highlights: [
@@ -264,6 +286,8 @@ export const apps: AppItem[] = [
     category: 'Education',
     downloads: '50+',
     playStore: 'https://play.google.com/store/apps/details?id=com.targetgeo',
+    packageId: 'com.targetgeo',
+    icon: 'app-icons/targetgeo.png',
     accent: '#2dd4bf',
     stack: ['React Native', 'Maps', 'Quizzes'],
     highlights: [
@@ -279,6 +303,8 @@ export const apps: AppItem[] = [
     category: 'Education',
     downloads: '10+',
     playStore: 'https://play.google.com/store/apps/details?id=com.targetpolity',
+    packageId: 'com.targetpolity',
+    icon: 'app-icons/targetpolity.png',
     accent: '#818cf8',
     stack: ['React Native', 'Offline Quizzes'],
     highlights: [
@@ -294,6 +320,8 @@ export const apps: AppItem[] = [
     category: 'Fitness',
     downloads: '50+',
     playStore: 'https://play.google.com/store/apps/details?id=com.rideflow.app',
+    packageId: 'com.rideflow.app',
+    icon: 'app-icons/rideflow.png',
     accent: '#22d3ee',
     stack: ['React Native', 'GPS', 'Social'],
     highlights: [
@@ -309,6 +337,8 @@ export const apps: AppItem[] = [
     category: 'Finance',
     downloads: '10+',
     playStore: 'https://play.google.com/store/apps/details?id=com.grocexpensetracker',
+    packageId: 'com.grocexpensetracker',
+    icon: 'app-icons/piko.png',
     accent: '#f59e0b',
     stack: ['React Native', 'Local Storage', 'Cloud Sync'],
     highlights: [
@@ -324,6 +354,8 @@ export const apps: AppItem[] = [
     category: 'Lifestyle',
     downloads: '50+',
     playStore: 'https://play.google.com/store/apps/details?id=com.digitalprayer',
+    packageId: 'com.digitalprayer',
+    icon: 'app-icons/digitalprayer.png',
     accent: '#e879f9',
     stack: ['React Native', 'Offline', 'i18n'],
     highlights: [
@@ -339,6 +371,8 @@ export const apps: AppItem[] = [
     category: 'Lifestyle',
     downloads: '50+',
     playStore: 'https://play.google.com/store/apps/details?id=com.digitalcounter',
+    packageId: 'com.digitalcounter',
+    icon: 'app-icons/digicounter.png',
     accent: '#86efac',
     stack: ['React Native', 'Local Storage'],
     highlights: [

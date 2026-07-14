@@ -1,5 +1,6 @@
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, Mail, MapPin, Menu, Phone, X } from 'lucide-react'
+import { ArrowUpRight, Briefcase, Mail, MapPin, Menu, Phone, Sparkles, X } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
 import { useEffect, useMemo, useState } from 'react'
 import {
   apps,
@@ -10,6 +11,11 @@ import {
   type AppCategory,
   type AppItem,
 } from './data/portfolio'
+
+function asset(path: string) {
+  const base = import.meta.env.BASE_URL
+  return `${base}${path.replace(/^\//, '')}`
+}
 
 function GitHubIcon({ size = 14 }: { size?: number }) {
   return (
@@ -46,20 +52,20 @@ function CursorGlow() {
   if (!on) return null
   return (
     <div
-      className="pointer-events-none fixed z-[1] h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-40 blur-3xl mix-blend-screen"
+      className="pointer-events-none fixed z-[1] h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-45 blur-3xl mix-blend-screen"
       style={{
         left: pos.x,
         top: pos.y,
         background:
-          'radial-gradient(circle, rgba(200,245,66,0.22) 0%, rgba(125,211,192,0.08) 40%, transparent 70%)',
+          'radial-gradient(circle, rgba(61,255,139,0.28) 0%, rgba(34,197,94,0.1) 40%, transparent 70%)',
       }}
     />
   )
 }
 
 const navLinks = [
-  { href: '#work', label: 'Work' },
-  { href: '#apps', label: 'Apps' },
+  { href: '#work', label: 'Company' },
+  { href: '#apps', label: 'Personal' },
   { href: '#skills', label: 'Skills' },
   { href: '#resume', label: 'Resume' },
   { href: '#contact', label: 'Contact' },
@@ -86,7 +92,7 @@ function Nav() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-colors ${
-        scrolled || open ? 'border-b border-line bg-ink/80 backdrop-blur-xl' : ''
+        scrolled || open ? 'border-b border-line bg-ink/85 backdrop-blur-xl' : ''
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 md:px-8">
@@ -160,7 +166,7 @@ function AppMarquee() {
   const names = apps.map((a) => a.name)
   const loop = [...names, ...names]
   return (
-    <div className="relative overflow-hidden border-y border-line bg-ink-soft/40 py-4">
+    <div className="relative overflow-hidden border-y border-line bg-ink-soft/50 py-4">
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-ink to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-ink to-transparent" />
       <motion.div
@@ -171,7 +177,7 @@ function AppMarquee() {
         {loop.map((name, i) => (
           <span
             key={`${name}-${i}`}
-            className="font-display text-sm font-semibold tracking-wide text-mist/80"
+            className="font-display text-sm font-semibold tracking-wide text-mist/85"
           >
             <span className="text-lime">◆</span> {name}
           </span>
@@ -188,9 +194,8 @@ function Hero() {
       className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pb-10 pt-28 md:pb-14 md:pt-32"
     >
       <div className="pointer-events-none absolute inset-0 grid-fade" />
-      <div className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full bg-lime/10 blur-3xl" />
-      <div className="pointer-events-none absolute right-0 top-40 h-80 w-80 rounded-full bg-sky/10 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-10 left-1/3 h-56 w-56 rounded-full bg-coral/10 blur-3xl" />
+      <div className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full bg-lime/15 blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-40 h-80 w-80 rounded-full bg-sky/15 blur-3xl" />
 
       <div className="relative z-10 mx-auto w-full max-w-6xl px-5 md:px-8">
         <motion.p
@@ -199,7 +204,7 @@ function Hero() {
           transition={{ duration: 0.6 }}
           className="mb-5 text-sm uppercase tracking-[0.22em] text-mist"
         >
-          Bangalore · React Native · Indie apps
+          Manyata Tech Park · React Native · Green builds
         </motion.p>
 
         <motion.h1
@@ -220,23 +225,22 @@ function Hero() {
           className="mt-8 flex max-w-2xl flex-col gap-6 md:mt-10 md:flex-row md:items-end md:justify-between md:gap-10"
         >
           <p className="text-lg leading-relaxed text-mist md:text-xl">
-            {profile.tagline} Currently shipping{' '}
-            <span className="text-cream">Vivah.world</span> — AI matrimonial for
-            Android & iOS at Infobell IT Solutions.
+            {profile.tagline} Company work and personal apps stay separate —
+            scan any personal project QR to open it on Play Store.
           </p>
           <div className="flex shrink-0 flex-wrap gap-3">
             <a
               href="#apps"
               className="inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-ink transition hover:brightness-110"
             >
-              See apps
+              Personal apps
               <ArrowUpRight size={16} />
             </a>
             <a
-              href="#contact"
+              href="#work"
               className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 text-sm text-cream transition hover:border-lime/50"
             >
-              Hire me
+              Company work
             </a>
           </div>
         </motion.div>
@@ -249,7 +253,7 @@ function Hero() {
         >
           {[
             { n: `${profile.experienceYears}+`, l: 'Years experience' },
-            { n: `${profile.appsLive}+`, l: 'Apps live' },
+            { n: `${profile.appsLive}`, l: 'Personal apps' },
             { n: profile.installs, l: 'Organic installs' },
           ].map((s) => (
             <div key={s.l}>
@@ -276,28 +280,22 @@ function About() {
         <div>
           <p className="text-sm uppercase tracking-[0.2em] text-lime">About</p>
           <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
-            Apps that ship.
+            Two lanes.
             <br />
-            Products that scale.
+            One craft.
           </h2>
         </div>
         <div className="space-y-5 text-base leading-relaxed text-mist md:text-lg">
           <p>
             I&apos;m a React Native developer with {profile.experienceYears}+
-            years building production mobile experiences — government systems,
-            fleet tracking, CRM/HRMS, and a growing portfolio of indie apps under
-            Silicon City Apps.
+            years shipping production mobile apps. Day job: company products.
+            Nights & weekends: my own Play Store apps — education, fitness,
+            finance, lifestyle, and platforms.
           </p>
           <p>
-            At Infobell IT Solutions I own Vivah.world end-to-end: feature
-            development, release management, and store deployment for both
-            Android and iOS. Before that I shipped face-recognition attendance
-            for Karnataka e-governance, CRM analytics, and a fleet platform
-            tracking 200+ vehicles.
-          </p>
-          <p>
-            BookMyGrounds is my startup-style playground — a live sports ground
-            booking platform where I built both the mobile app and backend.
+            Company work covers Vivah.world, government attendance (KAAMS),
+            CRM/HRMS, and fleet systems. Personal projects are listed separately
+            below with logos and QR codes — every one built and published by me.
           </p>
           <div className="flex flex-wrap gap-4 pt-2 text-sm text-cream">
             <span className="inline-flex items-center gap-2">
@@ -310,122 +308,55 @@ function About() {
           </div>
         </div>
       </div>
-
-      <div className="mx-auto mt-14 max-w-6xl px-5 md:px-8">
-        <div className="relative overflow-hidden rounded-3xl border border-lime/25 bg-gradient-to-br from-panel via-ink-soft to-panel p-6 md:p-10">
-          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-lime/15 blur-3xl" />
-          <p className="text-xs font-semibold tracking-[0.2em] text-lime uppercase">
-            Now building
-          </p>
-          <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div className="max-w-2xl">
-              <h3 className="font-display text-3xl font-bold text-cream md:text-4xl">
-                Vivah.world
-              </h3>
-              <p className="mt-3 text-mist md:text-lg">
-                AI matrimonial app for Android &amp; iOS — I handle everything from
-                development to Play Store and App Store releases at Infobell IT
-                Solutions (joined Nov 10, 2025).
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {['React Native', 'AI', 'Android', 'iOS', 'App Store', 'Play Store'].map(
-                (t) => (
-                  <span
-                    key={t}
-                    className="rounded-full border border-line px-3 py-1.5 text-xs text-cream"
-                  >
-                    {t}
-                  </span>
-                ),
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
   )
 }
 
-function Featured() {
-  const featured = apps.filter((a) => a.featured).slice(0, 4)
-  return (
-    <section className="relative border-t border-line py-20 md:py-28">
-      <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <p className="text-sm uppercase tracking-[0.2em] text-lime">Featured</p>
-        <h2 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight md:text-5xl">
-          Products people install
-        </h2>
-        <div className="mt-12 grid gap-4 md:grid-cols-2">
-          {featured.map((app, i) => (
-            <FeaturedCard key={app.id} app={app} index={i} />
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function FeaturedCard({ app, index }: { app: AppItem; index: number }) {
-  return (
-    <motion.a
-      href={app.playStore}
-      target="_blank"
-      rel="noreferrer"
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.45, delay: index * 0.06 }}
-      className="group relative min-h-[220px] overflow-hidden rounded-3xl border border-line bg-panel p-6 md:p-8"
-    >
-      <div
-        className="absolute inset-0 opacity-40 transition duration-500 group-hover:opacity-70"
-        style={{
-          background: `radial-gradient(circle at 90% 10%, ${app.accent}55, transparent 45%)`,
-        }}
-      />
-      <div className="relative flex h-full flex-col justify-between gap-8">
-        <div>
-          <p className="text-xs tracking-wide text-mist uppercase">
-            {app.category} · {app.downloads}
-          </p>
-          <h3 className="mt-3 font-display text-3xl font-bold text-cream transition group-hover:text-lime">
-            {app.name}
-          </h3>
-          <p className="mt-3 max-w-md text-sm leading-relaxed text-mist md:text-base">
-            {app.tagline}
-          </p>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex flex-wrap gap-1.5">
-            {app.stack.slice(0, 3).map((s) => (
-              <span
-                key={s}
-                className="rounded-full border border-line px-2.5 py-1 text-[11px] text-cream/80"
-              >
-                {s}
-              </span>
-            ))}
-          </div>
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-lime text-ink transition group-hover:scale-110">
-            <ArrowUpRight size={18} />
-          </span>
-        </div>
-      </div>
-    </motion.a>
-  )
-}
-
-function Experience() {
+function CompanyWork() {
   return (
     <section id="work" className="relative border-t border-line py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-lime/30 bg-lime/10 px-3 py-1 text-xs font-semibold tracking-wide text-lime uppercase">
+          <Briefcase size={12} />
+          Company products
+        </div>
         <p className="text-sm uppercase tracking-[0.2em] text-lime">Experience</p>
-        <h2 className="mt-3 max-w-xl font-display text-4xl font-bold tracking-tight md:text-5xl">
-          Where I&apos;ve built
+        <h2 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight md:text-5xl">
+          What I build at work
         </h2>
+        <p className="mt-4 max-w-2xl text-mist">
+          Client and employer products only — not mixed with my personal Play
+          Store apps.
+        </p>
 
-        <div className="mt-14">
+        <div className="mt-10 relative overflow-hidden rounded-3xl border border-lime/30 bg-gradient-to-br from-panel via-ink-soft to-panel p-6 md:p-10">
+          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-lime/20 blur-3xl" />
+          <p className="text-xs font-semibold tracking-[0.2em] text-lime uppercase">
+            Current company product
+          </p>
+          <h3 className="mt-3 font-display text-3xl font-bold text-cream md:text-4xl">
+            Vivah.world
+          </h3>
+          <p className="mt-3 max-w-2xl text-mist md:text-lg">
+            AI matrimonial app for Android &amp; iOS at Infobell IT Solutions
+            (joined Nov 10, 2025). I own development through Play Store &amp;
+            App Store release.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {['React Native', 'AI', 'Android', 'iOS', 'App Store', 'Play Store'].map(
+              (t) => (
+                <span
+                  key={t}
+                  className="rounded-full border border-line px-3 py-1.5 text-xs text-cream"
+                >
+                  {t}
+                </span>
+              ),
+            )}
+          </div>
+        </div>
+
+        <div className="mt-6">
           {experience.map((job, i) => (
             <motion.article
               key={job.company}
@@ -479,7 +410,115 @@ function Experience() {
   )
 }
 
-function Apps() {
+function AppLogo({ app, size = 56 }: { app: AppItem; size?: number }) {
+  return (
+    <img
+      src={asset(app.icon)}
+      alt={`${app.name} logo`}
+      width={size}
+      height={size}
+      className="rounded-2xl border border-line bg-ink object-cover shadow-[0_0_24px_rgba(61,255,139,0.12)]"
+      loading="lazy"
+    />
+  )
+}
+
+function AppQr({ url, size = 84 }: { url: string; size?: number }) {
+  return (
+    <div className="rounded-xl border border-line bg-cream p-1.5 shadow-[0_0_20px_rgba(61,255,139,0.15)]">
+      <QRCodeSVG
+        value={url}
+        size={size}
+        bgColor="#eef8f0"
+        fgColor="#04140c"
+        level="M"
+        marginSize={1}
+      />
+    </div>
+  )
+}
+
+function FeaturedPersonal() {
+  const featured = apps.filter((a) => a.featured).slice(0, 4)
+  return (
+    <section className="relative border-t border-line py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-lime/30 bg-lime/10 px-3 py-1 text-xs font-semibold tracking-wide text-lime uppercase">
+          <Sparkles size={12} />
+          Personal projects
+        </div>
+        <p className="text-sm uppercase tracking-[0.2em] text-lime">Featured</p>
+        <h2 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight md:text-5xl">
+          Apps I built on my own
+        </h2>
+        <p className="mt-4 max-w-2xl text-mist">
+          Solo products on Play Store — logos + QR codes for quick install.
+        </p>
+        <div className="mt-12 grid gap-4 md:grid-cols-2">
+          {featured.map((app, i) => (
+            <motion.div
+              key={app.id}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.45, delay: i * 0.06 }}
+              className="group relative min-h-[240px] overflow-hidden rounded-3xl border border-line bg-panel p-6 md:p-8"
+            >
+              <div
+                className="absolute inset-0 opacity-35 transition duration-500 group-hover:opacity-60"
+                style={{
+                  background: `radial-gradient(circle at 90% 10%, ${app.accent}55, transparent 45%)`,
+                }}
+              />
+              <div className="relative flex h-full flex-col justify-between gap-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex gap-4">
+                    <AppLogo app={app} size={64} />
+                    <div>
+                      <p className="text-xs tracking-wide text-mist uppercase">
+                        {app.category} · {app.downloads}
+                      </p>
+                      <h3 className="mt-2 font-display text-2xl font-bold text-cream md:text-3xl">
+                        {app.name}
+                      </h3>
+                      <p className="mt-2 max-w-sm text-sm leading-relaxed text-mist">
+                        {app.tagline}
+                      </p>
+                    </div>
+                  </div>
+                  <AppQr url={app.playStore} size={78} />
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex flex-wrap gap-1.5">
+                    {app.stack.slice(0, 3).map((s) => (
+                      <span
+                        key={s}
+                        className="rounded-full border border-line px-2.5 py-1 text-[11px] text-cream/80"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                  <a
+                    href={app.playStore}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-lime px-4 py-2 text-xs font-semibold text-ink transition hover:brightness-110"
+                  >
+                    Play Store
+                    <ArrowUpRight size={14} />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function PersonalApps() {
   const [filter, setFilter] = useState<AppCategory>('All')
 
   const filtered = useMemo(() => {
@@ -490,18 +529,20 @@ function Apps() {
   return (
     <section id="apps" className="relative border-t border-line py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <div>
-          <p className="text-sm uppercase tracking-[0.2em] text-lime">
-            Indie portfolio
-          </p>
-          <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
-            {apps.length} apps live on Play Store
-          </h2>
-          <p className="mt-4 max-w-xl text-mist">
-            Built solo — education, fitness, finance, lifestyle, and a sports
-            booking platform. Every card opens the live store listing.
-          </p>
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-lime/30 bg-lime/10 px-3 py-1 text-xs font-semibold tracking-wide text-lime uppercase">
+          <Sparkles size={12} />
+          Personal only
         </div>
+        <p className="text-sm uppercase tracking-[0.2em] text-lime">
+          Indie Play Store
+        </p>
+        <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
+          {apps.length} personal apps — with QR
+        </h2>
+        <p className="mt-4 max-w-xl text-mist">
+          These are my own apps (not company products). Scan the QR or tap
+          through to the live listing.
+        </p>
 
         <div className="mt-10 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {categories.map((c) => (
@@ -523,41 +564,38 @@ function Apps() {
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {filtered.map((app, i) => (
-              <motion.a
+              <motion.article
                 key={app.id}
                 layout
-                href={app.playStore}
-                target="_blank"
-                rel="noreferrer"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ duration: 0.35, delay: (i % 6) * 0.03 }}
-                className="group relative block overflow-hidden rounded-2xl border border-line bg-panel/80 p-5 transition hover:border-lime/35 hover:bg-panel"
+                className="group relative overflow-hidden rounded-2xl border border-line bg-panel/90 p-5 transition hover:border-lime/40"
               >
                 <div
-                  className="absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-30 blur-2xl transition group-hover:opacity-55"
+                  className="absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-25 blur-2xl transition group-hover:opacity-45"
                   style={{ background: app.accent }}
                 />
                 <div className="relative">
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-xs tracking-wide text-mist uppercase">
-                        {app.category} · {app.downloads}
-                      </p>
-                      <h3 className="mt-2 font-display text-xl font-bold text-cream transition group-hover:text-lime">
-                        {app.name}
-                      </h3>
+                    <div className="flex gap-3">
+                      <AppLogo app={app} size={52} />
+                      <div>
+                        <p className="text-xs tracking-wide text-mist uppercase">
+                          {app.category} · {app.downloads}
+                        </p>
+                        <h3 className="mt-1 font-display text-xl font-bold text-cream">
+                          {app.name}
+                        </h3>
+                      </div>
                     </div>
-                    <ArrowUpRight
-                      size={18}
-                      className="mt-1 shrink-0 text-mist transition group-hover:text-lime"
-                    />
+                    <AppQr url={app.playStore} size={72} />
                   </div>
-                  <p className="mt-3 text-sm leading-relaxed text-mist">
+                  <p className="mt-4 text-sm leading-relaxed text-mist">
                     {app.tagline}
                   </p>
-                  <ul className="mt-4 space-y-1.5">
+                  <ul className="mt-3 space-y-1.5">
                     {app.highlights.slice(0, 2).map((h) => (
                       <li
                         key={h}
@@ -567,18 +605,29 @@ function Apps() {
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-5 flex flex-wrap gap-1.5">
-                    {app.stack.map((s) => (
-                      <span
-                        key={s}
-                        className="rounded-md bg-ink px-2 py-0.5 text-[10px] text-mist"
-                      >
-                        {s}
-                      </span>
-                    ))}
+                  <div className="mt-5 flex items-center justify-between gap-2">
+                    <div className="flex flex-wrap gap-1.5">
+                      {app.stack.slice(0, 2).map((s) => (
+                        <span
+                          key={s}
+                          className="rounded-md bg-ink px-2 py-0.5 text-[10px] text-mist"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                    <a
+                      href={app.playStore}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-lime transition hover:underline"
+                    >
+                      Open
+                      <ArrowUpRight size={14} />
+                    </a>
                   </div>
                 </div>
-              </motion.a>
+              </motion.article>
             ))}
           </AnimatePresence>
         </div>
@@ -641,9 +690,8 @@ function Resume() {
           Updated profile
         </h2>
         <p className="mt-4 max-w-2xl text-mist">
-          Latest role at Infobell IT Solutions (Nov 2025 – Present) on Vivah.world,
-          plus prior work at EpicMinds, Block Stack, and Kibbcom — and{' '}
-          {apps.length}+ indie apps shipped solo.
+          Company experience and personal apps listed as separate tracks —
+          Infobell / Vivah.world at work, {apps.length} solo apps on Play Store.
         </p>
 
         <div className="mt-10 overflow-hidden rounded-2xl border border-line bg-panel">
@@ -659,7 +707,7 @@ function Resume() {
           <div className="grid gap-0 md:grid-cols-2">
             <div className="border-b border-line p-6 md:border-r md:border-b-0 md:p-8">
               <h4 className="text-xs tracking-widest text-lime uppercase">
-                Experience
+                Company experience
               </h4>
               <ul className="mt-4 space-y-4">
                 {experience.map((e) => (
@@ -674,7 +722,7 @@ function Resume() {
             </div>
             <div className="p-6 md:p-8">
               <h4 className="text-xs tracking-widest text-lime uppercase">
-                Education & highlight apps
+                Personal apps & education
               </h4>
               <p className="mt-4 font-semibold text-cream">
                 {profile.education.degree}
@@ -683,13 +731,12 @@ function Resume() {
                 {profile.education.school} · {profile.education.dates}
               </p>
               <ul className="mt-6 space-y-2 text-sm text-mist">
-                <li>· BookMyGrounds — full-stack sports booking platform</li>
-                <li>· RailAspirant & Math Master — 5K+ downloads each</li>
-                <li>· KAAMS — govt attendance with face recognition</li>
-                <li>· Vivah.world — AI matrimonial (current)</li>
+                <li>· {apps.length} personal Play Store apps (solo)</li>
+                <li>· BookMyGrounds, RailAspirant, Math Master & more</li>
+                <li>· Company: Vivah.world, KAAMS, CRM, Fleet (separate)</li>
               </ul>
               <a
-                href={`${import.meta.env.BASE_URL}resume.html`}
+                href={asset('resume.html')}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-8 inline-flex items-center gap-2 rounded-full bg-lime px-5 py-2.5 text-sm font-semibold text-ink"
@@ -707,14 +754,21 @@ function Resume() {
 
 function Contact() {
   return (
-    <section id="contact" className="relative overflow-hidden border-t border-line py-20 md:py-28">
-      <div className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-lime/10 blur-3xl" />
+    <section
+      id="contact"
+      className="relative overflow-hidden border-t border-line py-20 md:py-28"
+    >
+      <div className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-lime/15 blur-3xl" />
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <p className="text-sm uppercase tracking-[0.2em] text-lime">Contact</p>
         <h2 className="mt-3 max-w-3xl font-display text-4xl font-bold tracking-tight md:text-6xl">
-          Let&apos;s build the next app people actually install.
+          Let&apos;s build something green lights love.
         </h2>
-        <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+        <p className="mt-4 flex items-center gap-2 text-mist">
+          <MapPin size={16} className="text-lime" />
+          {profile.location}
+        </p>
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
           <a
             href={profile.emailHref}
             className="inline-flex items-center gap-3 rounded-2xl border border-line bg-panel px-5 py-4 text-cream transition hover:border-lime/40"
@@ -753,7 +807,7 @@ function Footer() {
         <p>
           © {new Date().getFullYear()} {profile.name}
         </p>
-        <p>React Native · Bangalore · Built with React + Tailwind</p>
+        <p>Company work · Personal apps · Bangalore</p>
       </div>
     </footer>
   )
@@ -768,9 +822,9 @@ export default function App() {
       <main className="relative z-[2]">
         <Hero />
         <About />
-        <Featured />
-        <Experience />
-        <Apps />
+        <CompanyWork />
+        <FeaturedPersonal />
+        <PersonalApps />
         <Skills />
         <Resume />
         <Contact />
