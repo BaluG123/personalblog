@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Syne", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --color-ink: #070b09;
+  --color-ink-soft: #0e1612;
+  --color-panel: #121c17;
+  --color-line: rgba(200, 245, 66, 0.12);
+  --color-mist: #a8b5ad;
+  --color-cream: #f2efe6;
+  --color-lime: #c8f542;
+  --color-lime-dim: #9bc22e;
+  --color-coral: #ff6b4a;
+  --color-sky: #7dd3c0;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    background: var(--color-ink);
+    color: var(--color-cream);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-lime);
+    color: var(--color-ink);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .grain {
+    position: relative;
+  }
+
+  .grain::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .mesh-bg {
+    background:
+      radial-gradient(ellipse 80% 60% at 15% 10%, rgba(200, 245, 66, 0.14), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 90% 20%, rgba(125, 211, 192, 0.1), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 70% 90%, rgba(255, 107, 74, 0.08), transparent 45%),
+      linear-gradient(180deg, #070b09 0%, #0a120e 45%, #070b09 100%);
+  }
+
+  .grid-fade {
+    background-image:
+      linear-gradient(rgba(200, 245, 66, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200, 245, 66, 0.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent);
+  }
+}

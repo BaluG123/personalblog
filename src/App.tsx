@@ -1,0 +1,550 @@
+import { motion, useScroll, useSpring } from 'framer-motion'
+import { ArrowUpRight, Mail, MapPin, Phone } from 'lucide-react'
+
+function GitHubIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 2C6.477 2 2 6.586 2 12.253c0 4.53 2.865 8.367 6.839 9.722.5.094.682-.222.682-.482 0-.237-.009-.866-.013-1.7-2.782.62-3.369-1.38-3.369-1.38-.454-1.18-1.11-1.495-1.11-1.495-.908-.636.069-.623.069-.623 1.004.072 1.532 1.06 1.532 1.06.892 1.566 2.341 1.114 2.91.852.092-.662.35-1.114.636-1.37-2.22-.26-4.555-1.143-4.555-5.087 0-1.124.39-2.043 1.029-2.764-.103-.26-.446-1.302.098-2.714 0 0 .84-.276 2.75 1.055A9.28 9.28 0 0 1 12 6.918a9.29 9.29 0 0 1 2.504.347c1.909-1.331 2.747-1.055 2.747-1.055.546 1.412.203 2.454.1 2.714.64.721 1.028 1.64 1.028 2.764 0 3.953-2.338 4.823-4.566 5.078.359.317.679.943.679 1.902 0 1.372-.012 2.477-.012 2.814 0 .263.18.58.688.48C19.138 20.616 22 16.78 22 12.253 22 6.586 17.523 2 12 2z" />
+    </svg>
+  )
+}
+import { useMemo, useState } from 'react'
+import {
+  apps,
+  categories,
+  experience,
+  profile,
+  skills,
+  type AppCategory,
+} from './data/portfolio'
+
+function ScrollProgress() {
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 28 })
+  return (
+    <motion.div
+      style={{ scaleX }}
+      className="fixed top-0 left-0 right-0 z-[60] h-[2px] origin-left bg-lime"
+    />
+  )
+}
+
+function Nav() {
+  const links = [
+    { href: '#work', label: 'Work' },
+    { href: '#apps', label: 'Apps' },
+    { href: '#skills', label: 'Skills' },
+    { href: '#resume', label: 'Resume' },
+    { href: '#contact', label: 'Contact' },
+  ]
+
+  return (
+    <header className="fixed inset-x-0 top-0 z-50">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 md:px-8">
+        <a
+          href="#top"
+          className="font-display text-sm font-bold tracking-tight text-cream md:text-base"
+        >
+          BG<span className="text-lime">.</span>
+        </a>
+        <nav className="hidden items-center gap-7 md:flex">
+          {links.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="text-sm text-mist transition hover:text-cream"
+            >
+              {l.label}
+            </a>
+          ))}
+        </nav>
+        <a
+          href={profile.github}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 rounded-full border border-line bg-ink-soft/70 px-3 py-1.5 text-xs text-cream backdrop-blur transition hover:border-lime/40 hover:text-lime"
+        >
+          <GitHubIcon size={14} />
+          GitHub
+        </a>
+      </div>
+    </header>
+  )
+}
+
+function Hero() {
+  return (
+    <section
+      id="top"
+      className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pb-16 pt-28 md:pb-24 md:pt-32"
+    >
+      <div className="pointer-events-none absolute inset-0 grid-fade" />
+      <div className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full bg-lime/10 blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-40 h-80 w-80 rounded-full bg-sky/10 blur-3xl" />
+
+      <div className="relative z-10 mx-auto w-full max-w-6xl px-5 md:px-8">
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-5 text-sm uppercase tracking-[0.22em] text-mist"
+        >
+          Bangalore · React Native · Indie apps
+        </motion.p>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.08 }}
+          className="font-display text-[clamp(3.2rem,12vw,7.5rem)] leading-[0.9] font-extrabold tracking-tight text-cream"
+        >
+          Balappa
+          <br />
+          <span className="text-lime">Goudi</span>
+        </motion.h1>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, delay: 0.18 }}
+          className="mt-8 flex max-w-2xl flex-col gap-6 md:mt-10 md:flex-row md:items-end md:justify-between md:gap-10"
+        >
+          <p className="text-lg leading-relaxed text-mist md:text-xl">
+            {profile.tagline} Currently shipping{' '}
+            <span className="text-cream">Vivah.world</span> — AI matrimonial for
+            Android & iOS.
+          </p>
+          <div className="flex shrink-0 gap-3">
+            <a
+              href="#apps"
+              className="inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-ink transition hover:brightness-110"
+            >
+              See apps
+              <ArrowUpRight size={16} />
+            </a>
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 text-sm text-cream transition hover:border-lime/50"
+            >
+              Hire me
+            </a>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.45, duration: 0.8 }}
+          className="mt-14 grid grid-cols-3 gap-4 border-t border-line pt-8 md:max-w-xl"
+        >
+          {[
+            { n: `${profile.experienceYears}+`, l: 'Years experience' },
+            { n: `${profile.appsLive}+`, l: 'Apps live' },
+            { n: profile.installs, l: 'Organic installs' },
+          ].map((s) => (
+            <div key={s.l}>
+              <div className="font-display text-2xl font-bold text-cream md:text-3xl">
+                {s.n}
+              </div>
+              <div className="mt-1 text-xs text-mist md:text-sm">{s.l}</div>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
+function About() {
+  return (
+    <section className="relative border-t border-line py-20 md:py-28">
+      <div className="mx-auto grid max-w-6xl gap-12 px-5 md:grid-cols-[1fr_1.2fr] md:gap-16 md:px-8">
+        <div>
+          <p className="text-sm uppercase tracking-[0.2em] text-lime">About</p>
+          <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
+            Apps that ship.
+            <br />
+            Products that scale.
+          </h2>
+        </div>
+        <div className="space-y-5 text-base leading-relaxed text-mist md:text-lg">
+          <p>
+            I&apos;m a React Native developer with {profile.experienceYears}+
+            years building production mobile experiences — government systems,
+            fleet tracking, CRM/HRMS, and a growing portfolio of indie apps under
+            Silicon City Apps.
+          </p>
+          <p>
+            At Infobell IT Solutions I own Vivah.world end-to-end: development,
+            release management, and store deployment for both Android and iOS.
+            Before that I shipped face-recognition attendance for Karnataka
+            e-governance, CRM analytics, and a fleet platform tracking 200+
+            vehicles.
+          </p>
+          <p>
+            BookMyGrounds is my startup-style playground — a live sports ground
+            booking platform where I built both the mobile app and backend.
+          </p>
+          <div className="flex flex-wrap gap-4 pt-2 text-sm text-cream">
+            <span className="inline-flex items-center gap-2">
+              <MapPin size={14} className="text-lime" />
+              {profile.location}
+            </span>
+            <span>
+              {profile.education.degree} · {profile.education.school}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Experience() {
+  return (
+    <section id="work" className="relative border-t border-line py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <p className="text-sm uppercase tracking-[0.2em] text-lime">Experience</p>
+        <h2 className="mt-3 max-w-xl font-display text-4xl font-bold tracking-tight md:text-5xl">
+          Where I&apos;ve built
+        </h2>
+
+        <div className="mt-14 space-y-0">
+          {experience.map((job, i) => (
+            <motion.article
+              key={job.company}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.5, delay: i * 0.05 }}
+              className="group grid gap-4 border-t border-line py-10 md:grid-cols-[220px_1fr] md:gap-10"
+            >
+              <div>
+                <p className="text-sm text-mist">{job.dates}</p>
+                {job.current && (
+                  <span className="mt-2 inline-block rounded-full bg-lime/15 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-lime uppercase">
+                    Current
+                  </span>
+                )}
+              </div>
+              <div>
+                <h3 className="font-display text-2xl font-bold text-cream transition group-hover:text-lime">
+                  {job.role}
+                </h3>
+                <p className="mt-1 text-mist">{job.company}</p>
+                <ul className="mt-5 space-y-2.5">
+                  {job.highlights.map((h) => (
+                    <li
+                      key={h}
+                      className="relative pl-4 text-sm leading-relaxed text-mist before:absolute before:top-2 before:left-0 before:h-1.5 before:w-1.5 before:rounded-full before:bg-lime/70 md:text-[15px]"
+                    >
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+                {job.stack && (
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {job.stack.map((s) => (
+                      <span
+                        key={s}
+                        className="rounded-full border border-line px-3 py-1 text-xs text-cream/80"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Apps() {
+  const [filter, setFilter] = useState<AppCategory>('All')
+
+  const filtered = useMemo(() => {
+    if (filter === 'All') return apps
+    return apps.filter((a) => a.category === filter)
+  }, [filter])
+
+  return (
+    <section id="apps" className="relative border-t border-line py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.2em] text-lime">
+              Indie portfolio
+            </p>
+            <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
+              {apps.length} apps live on Play Store
+            </h2>
+            <p className="mt-4 max-w-xl text-mist">
+              Built solo — education, fitness, finance, lifestyle, and a sports
+              booking platform. Every link below opens the live store listing.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-10 flex flex-wrap gap-2">
+          {categories.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setFilter(c)}
+              className={`rounded-full px-4 py-2 text-sm transition ${
+                filter === c
+                  ? 'bg-lime font-semibold text-ink'
+                  : 'border border-line text-mist hover:border-lime/40 hover:text-cream'
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((app, i) => (
+            <motion.a
+              key={app.id}
+              href={app.playStore}
+              target="_blank"
+              rel="noreferrer"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.4, delay: (i % 6) * 0.04 }}
+              className="group relative block overflow-hidden rounded-2xl border border-line bg-panel/80 p-5 transition hover:border-lime/35 hover:bg-panel"
+            >
+              <div
+                className="absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-30 blur-2xl transition group-hover:opacity-50"
+                style={{ background: app.accent }}
+              />
+              <div className="relative">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs tracking-wide text-mist uppercase">
+                      {app.category} · {app.downloads} downloads
+                    </p>
+                    <h3 className="mt-2 font-display text-xl font-bold text-cream transition group-hover:text-lime">
+                      {app.name}
+                    </h3>
+                  </div>
+                  <ArrowUpRight
+                    size={18}
+                    className="mt-1 shrink-0 text-mist transition group-hover:text-lime"
+                  />
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-mist">
+                  {app.tagline}
+                </p>
+                <ul className="mt-4 space-y-1.5">
+                  {app.highlights.slice(0, 2).map((h) => (
+                    <li key={h} className="text-xs leading-relaxed text-cream/70">
+                      · {h}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-5 flex flex-wrap gap-1.5">
+                  {app.stack.map((s) => (
+                    <span
+                      key={s}
+                      className="rounded-md bg-ink px-2 py-0.5 text-[10px] text-mist"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Skills() {
+  const groups = [
+    { title: 'Languages', items: skills.languages },
+    { title: 'Frameworks', items: skills.frameworks },
+    { title: 'Tools', items: skills.tools },
+    { title: 'Specialties', items: skills.specialties },
+  ]
+
+  return (
+    <section id="skills" className="relative border-t border-line py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <p className="text-sm uppercase tracking-[0.2em] text-lime">Skills</p>
+        <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
+          Stack I live in
+        </h2>
+        <div className="mt-12 grid gap-8 md:grid-cols-2">
+          {groups.map((g) => (
+            <div key={g.title}>
+              <h3 className="text-sm font-semibold tracking-wide text-mist uppercase">
+                {g.title}
+              </h3>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {g.items.map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-full border border-line bg-ink-soft px-3.5 py-1.5 text-sm text-cream transition hover:border-lime/40 hover:text-lime"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Resume() {
+  return (
+    <section id="resume" className="relative border-t border-line py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <p className="text-sm uppercase tracking-[0.2em] text-lime">Resume</p>
+        <h2 className="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl">
+          Updated profile
+        </h2>
+        <p className="mt-4 max-w-2xl text-mist">
+          Latest role at Infobell IT Solutions (Nov 2025 – Present) on Vivah.world,
+          plus prior work at EpicMinds, Block Stack, and Kibbcom — and{' '}
+          {apps.length}+ indie apps shipped solo.
+        </p>
+
+        <div className="mt-10 overflow-hidden rounded-2xl border border-line bg-panel">
+          <div className="border-b border-line bg-ink-soft/80 px-6 py-5 md:px-8">
+            <h3 className="font-display text-2xl font-bold">{profile.name}</h3>
+            <p className="mt-1 text-sm text-mist">
+              {profile.title} · {profile.location}
+            </p>
+            <p className="mt-2 text-sm text-cream/80">
+              {profile.email} · {profile.phone} · github.com/BaluG123
+            </p>
+          </div>
+          <div className="grid gap-0 md:grid-cols-2">
+            <div className="border-b border-line p-6 md:border-r md:border-b-0 md:p-8">
+              <h4 className="text-xs tracking-widest text-lime uppercase">
+                Experience
+              </h4>
+              <ul className="mt-4 space-y-4">
+                {experience.map((e) => (
+                  <li key={e.company}>
+                    <p className="font-semibold text-cream">{e.role}</p>
+                    <p className="text-sm text-mist">
+                      {e.company} · {e.dates}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="p-6 md:p-8">
+              <h4 className="text-xs tracking-widest text-lime uppercase">
+                Education & highlight apps
+              </h4>
+              <p className="mt-4 font-semibold text-cream">
+                {profile.education.degree}
+              </p>
+              <p className="text-sm text-mist">
+                {profile.education.school} · {profile.education.dates}
+              </p>
+              <ul className="mt-6 space-y-2 text-sm text-mist">
+                <li>· BookMyGrounds — full-stack sports booking platform</li>
+                <li>· RailAspirant & Math Master — 5K+ downloads each</li>
+                <li>· KAAMS — govt attendance with face recognition</li>
+                <li>· Vivah.world — AI matrimonial (current)</li>
+              </ul>
+              <a
+                href={`${import.meta.env.BASE_URL}resume.html`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-8 inline-flex items-center gap-2 rounded-full bg-lime px-5 py-2.5 text-sm font-semibold text-ink"
+              >
+                Open printable resume
+                <ArrowUpRight size={16} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Contact() {
+  return (
+    <section id="contact" className="relative border-t border-line py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <p className="text-sm uppercase tracking-[0.2em] text-lime">Contact</p>
+        <h2 className="mt-3 max-w-3xl font-display text-4xl font-bold tracking-tight md:text-6xl">
+          Let&apos;s build the next app people actually install.
+        </h2>
+        <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+          <a
+            href={profile.emailHref}
+            className="inline-flex items-center gap-3 rounded-2xl border border-line bg-panel px-5 py-4 text-cream transition hover:border-lime/40"
+          >
+            <Mail className="text-lime" size={18} />
+            {profile.email}
+          </a>
+          <a
+            href={profile.phoneHref}
+            className="inline-flex items-center gap-3 rounded-2xl border border-line bg-panel px-5 py-4 text-cream transition hover:border-lime/40"
+          >
+            <Phone className="text-lime" size={18} />
+            {profile.phone}
+          </a>
+          <a
+            href={profile.github}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-3 rounded-2xl border border-line bg-panel px-5 py-4 text-cream transition hover:border-lime/40"
+          >
+            <span className="text-lime">
+              <GitHubIcon size={18} />
+            </span>
+            github.com/BaluG123
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-line py-8">
+      <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 text-sm text-mist md:flex-row md:items-center md:justify-between md:px-8">
+        <p>© {new Date().getFullYear()} {profile.name}</p>
+        <p>React Native · Bangalore · Built with React + Tailwind</p>
+      </div>
+    </footer>
+  )
+}
+
+export default function App() {
+  return (
+    <div className="grain mesh-bg min-h-screen">
+      <ScrollProgress />
+      <Nav />
+      <main className="relative z-[2]">
+        <Hero />
+        <About />
+        <Experience />
+        <Apps />
+        <Skills />
+        <Resume />
+        <Contact />
+      </main>
+      <Footer />
+    </div>
+  )
+}
